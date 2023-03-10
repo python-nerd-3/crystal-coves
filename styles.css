@@ -1,0 +1,43 @@
+canvas {
+    background-color: white;
+    border: 10px solid gray;
+}
+body {
+    background-color: black;
+    color: white;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin: 0;
+}
+button, p {
+    font-size: 32px;
+}
+
+span {
+    font-size: 48px;
+}
+
+img {
+    width: 48px;
+    height: 48px;
+}
+
+button:not(.button) {
+    visibility: hidden;
+    width: fit-content;
+    height: fit-content;
+    padding: 0 !important;
+}
+
+button:not(.button)::selection {
+    color: none;
+    background: none;
+}
+
+button:not(.button)::-moz-selection {
+    color: none;
+    background: none;
+}
+
+button:not(.button)>* {
+    visibility: visible;
+}

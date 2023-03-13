@@ -1,2 +1,1 @@
-# mining-game
-rex sqrt(-2.43)
+how did this get in here

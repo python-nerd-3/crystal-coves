@@ -1,12 +1,16 @@
 let canvas = document.querySelector("#GAME")
 let ctx = canvas.getContext("2d")
-let length = 20000
+let length = 100000
 let ores = ["HEY SOMETING BRONK"]
 let moves = []
 let oreNames = ["stone"]
 let allOreNames = []
 let allOres = []
 let lastFavicon = "stone"
+let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+if (isSafari) {
+    alert("WARNING: This game is very glitchy on mobile.")
+}
 
 // QoL functions
 
@@ -131,6 +135,9 @@ function loadSave(code) {
         if (eval(`${currentOre}Amt`) > 0) {
             document.querySelector(`#tx-${currentOre}`).removeAttribute("hidden")
             document.querySelector(`#${currentOre}-counter`).innerHTML = eval(`${currentOre}Amt`)
+            if (currentOre != "voidElement") {
+                oreNames.push(currentOre)
+            }
         } else {
             document.querySelector(`#tx-${currentOre}`).setAttribute("hidden", "")
             document.querySelector(`#${currentOre}-counter`).innerHTML = ""
@@ -186,14 +193,15 @@ let coal = new Ore("coal", 25);
 let iron = new Ore("iron", 40)
 let lead = new Ore("lead", 65);
 let gold = new Ore("gold", 300);
-let relic = new Ore("relic", 650);
+let relic = new Ore("relic", 500, "Bronze Relic");
 let emerald = new Ore("emerald", 750);
 let diamond = new Ore("diamond", 1000);
 let painite = new Ore("painite", 1500);
 let vyvyxyn = new Ore("vyvyxyn", 3000);
 // ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
-let crystal1 = new Ore("crystalresonance", 20000, "Crystal of Resonance")
+let crystal1 = new Ore("crystalresonance", 25000, "Crystal of Resonance")
 let crysor = new Ore("crysor", 5000)
+let amethyst = new Ore("amethyst", 125)
 
 function clearMine() {
     ctx.clearRect(0, 100, 1600, 800)
@@ -212,6 +220,10 @@ if (document.cookie) {
 
 setInterval(changeFavicon, 5000);
 setInterval(generateSave, 20000);
+
+window.onbeforeunload = function(){
+    generateSave();
+}
 
 canvas.addEventListener("mousedown", click)
 

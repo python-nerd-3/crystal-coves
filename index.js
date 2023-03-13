@@ -210,7 +210,6 @@ function clearMine() {
         genOres.push(new OreDisplay(stone, i * 25, 100))
     }
 }
-clearMine();
 ctx.beginPath();
 ctx.fillRect(0, 0, 1600, 100);
 
@@ -220,6 +219,8 @@ if (document.cookie) {
 
 setInterval(changeFavicon, 5000);
 setInterval(generateSave, 20000);
+setTimeout(clearMine, 200);
+
 
 window.onbeforeunload = function(){
     generateSave();

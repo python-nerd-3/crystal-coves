@@ -60,7 +60,6 @@ function click(event) {
             generate = true;
             genOres.splice(genOres.indexOf(i), 1)
             targetBlock = i;
-            console.log(targetBlock)
             break;
         }
     }
@@ -91,9 +90,12 @@ function changeFavicon() {
 }
 
 function showInfo(name) {
+    let toDisplay = name
     let oreFound = allOres.find(x => x.name == name);
-    console.log(name)
-    document.querySelector("#oreInfo").innerHTML = `Name: ${capitalizeFirstLetter(name)}, Rarity: 1 in ${oreFound.rarity}`
+    if (oreFound.display) {
+        toDisplay = oreFound.display
+    }
+    document.querySelector("#oreInfo").innerHTML = `Name: ${capitalizeFirstLetter(toDisplay)}, Rarity: 1 in ${oreFound.rarity}`
 }
 
 // saving
@@ -111,28 +113,44 @@ function generateSave() {
         }
     }
     string = btoa(string)
-    document.querySelector("#save-loc").innerHTML = string
+    document.cookie = `save=${string}; SameSite=Strict; Expires=Tues, 1 Jan 2030 12:00:00 UTC`
 }
 
 function loadSave(code) {
-    let array = atob(code)
-    array = array.split("/")
-    console.log(array)
+    clearMine();
+    let array = atob(code);
+    let index = 0;
+    let currentOre = null;
+    array = array.split("/");
+    for (i of array) {
+        currentOre = allOreNames[index];
+        if (i % 7 !== 0) {
+            window.location = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        }
+        eval(`${currentOre}Amt = ${i / 7}`)
+        if (eval(`${currentOre}Amt`) > 0) {
+            document.querySelector(`#tx-${currentOre}`).removeAttribute("hidden")
+            document.querySelector(`#${currentOre}-counter`).innerHTML = eval(`${currentOre}Amt`)
+        } else {
+            document.querySelector(`#tx-${currentOre}`).setAttribute("hidden", "")
+            document.querySelector(`#${currentOre}-counter`).innerHTML = ""
+        }
+        index += 1
+    }
 }
 
 // classes
 
 class Ore {
-    constructor(name, rarity) {
+    constructor(name, rarity, display = "") {
         this.name = name;
         this.texture = document.querySelector(`#tx-${name}`);
         this.rarity = rarity;
+        this.display = display;
         if (name != "stone" && name != "voidElement") {
             this.append();
         } else if (name != "voidElement") {
             ores = new Array(length).fill(this);
-        } else {
-            console.log(this.texture)
         }
         eval(`window.${name}Amt = 0`)
         allOreNames.push(name)
@@ -173,6 +191,9 @@ let emerald = new Ore("emerald", 750);
 let diamond = new Ore("diamond", 1000);
 let painite = new Ore("painite", 1500);
 let vyvyxyn = new Ore("vyvyxyn", 3000);
+// ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
+let crystal1 = new Ore("crystalresonance", 20000, "Crystal of Resonance")
+let crysor = new Ore("crysor", 5000)
 
 function clearMine() {
     ctx.clearRect(0, 100, 1600, 800)
@@ -185,7 +206,12 @@ clearMine();
 ctx.beginPath();
 ctx.fillRect(0, 0, 1600, 100);
 
+if (document.cookie) {
+    loadSave(document.cookie.substring(5));
+}
+
 setInterval(changeFavicon, 5000);
+setInterval(generateSave, 20000);
 
 canvas.addEventListener("mousedown", click)
 

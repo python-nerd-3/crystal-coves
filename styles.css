@@ -9,7 +9,7 @@ body {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     margin: 0;
 }
-button, p {
+button, #oreInfo {
     font-size: 32px;
 }
 
@@ -43,19 +43,74 @@ button:not(.button)>* {
     visibility: visible;
 }
 
-#ores {
-    padding-top: 8px;
-    border: 10px solid white;
-    border-left: 0;
-    border-right: 0;
-    height: fit-content;
+
+a.noLinkFormat { color: black; text-decoration: none;}
+a.noLinkFormat:link { color: black; text-decoration: none;}
+a.noLinkFormat:visited { color: black; text-decoration: none;}
+a.noLinkFormat:hover { color: black; text-decoration: none;}
+
+aside {
+    height: 100%; 
+    width: 20vw; 
+    position: fixed; 
+    z-index: 1; 
+    top: 0; 
+    right: 0;
+    background-color: #111; 
+    border-left: #7f7f7f solid 10px;
+    padding-top: 20px;
+    bottom: 0;
+    overflow: scroll;
+    /*this entire thing is all stack overflow code*/
 }
 
-a.credits { color: black; text-decoration: none;}
-a.credits:link { color: black; text-decoration: none;}
-a.credits:visited { color: black; text-decoration: none;}
-a.credits:hover { color: black; text-decoration: none;}
+#ore-header {
+    text-align: center;
+    margin-top: 0;
+    font-size: 3vw;
+}
 
-#save {
-    margin-bottom: 40px;
+.ore-display-div {
+    margin-left: 1vw;
+    display: flex;
+    border: 1vw solid gray;
+    border-radius: 2vw;
+    width: 20vw;
+    position: relative;
+    background-color: #000;
+    margin-bottom: 1vw;
+}
+
+.ore-display-div>button>img {
+    top: 50%;
+    transform: translate(0, -50%);
+    position: absolute;
+    width: 5vw;
+    height: 5vw;
+    margin-left: 0.5vw;
+}
+
+.ore-display-div>span {
+    margin-left: 6vw;
+    font-size: 5vw;
+}
+
+.ore-display-div.common {
+    border-color: white;
+}
+
+.ore-display-div.uncommon {
+    border-color: rgb(125, 255, 125);
+}
+
+.ore-display-div.rare {
+    border-color: rgb(255, 125, 0);
+}
+
+.ore-display-div.epic {
+    border-color: rgb(255, 255, 0);
+}
+
+.ore-display-div.unseen {
+    border-color: rgb(125, 0, 255);
 }

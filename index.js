@@ -24,7 +24,7 @@ function capitalizeFirstLetter(val) {
 }
 
 
-// generation
+// ore manipulation & generation
 
 function generateOre(x, y) {
     let cont = true
@@ -42,32 +42,54 @@ function generateOre(x, y) {
 function addOre(type, amt) {
     let discovered = false;
     eval(`${type}Amt += ${amt}`)
-    eval(`document.querySelector("#${type}-counter").innerHTML = ${type}Amt`)
     eval(`if (${type}Amt === 1) {discovered = true}`)
     if (discovered) {
         if (type !== "stone" && type !== "voidElement") {
             oreNames.push(type)
         }
         if (type !== "voidElement") {
-            document.querySelector(`#tx-${type}`).removeAttribute("hidden");
+            createDisplay(type);
         }
     }
+    eval(`document.querySelector("#${type}-counter").innerHTML = ${type}Amt`)
+
+}
+
+function createDisplay(name) {
+    $("aside").append(`
+        <div class="ore-display-div" id="display-${name}">\n
+            <button onclick="showInfo('${name}')">\n
+                <img src="assets/${name}.png">\n
+            </button>\n
+            <span id="${name}-counter">${eval(`${name}Amt`)}</span>\n
+        </div>
+    `)
+    eval(`if (${name}.rarity > 1) {$("#display-${name}").addClass("common")}`)
+    eval(`if (${name}.rarity > 39) {$("#display-${name}").addClass("uncommon")}`)
+    eval(`if (${name}.rarity > 299) {$("#display-${name}").addClass("rare")}`)
+    eval(`if (${name}.rarity > 999) {$("#display-${name}").addClass("epic")}`)
+    eval(`if (${name}.rarity > 10000) {$("#display-${name}").addClass("unseen")}`)
+
+
+
+}
+
+function createAllDisplays() {
+    for (i of sortedOreNames) {
+        eval(`if (${i}Amt >= 1) {createDisplay(i)}`);
+    }
+    $("#display-voidElement").remove();
 }
 
 // event handling
 
 function click(event) {
-    let generate = false;
     let targetBlock = null;
-    for (i of genOres) {
-        if (event.pageX >= i.x + 10 && event.pageX <= i.x + 35 && event.pageY >= i.y + 10 && event.pageY <= i.y + 35) {
-            generate = true;
-            genOres.splice(genOres.indexOf(i), 1)
-            targetBlock = i;
-            break;
-        }
-    }
-    if (generate) {
+    let foundOre = genOres.find((z) => (event.pageX >= z.x + 10 && event.pageX <= z.x + 35 && event.pageY >= z.y + 10 && event.pageY <= z.y + 35)) 
+    console.log(foundOre)
+    if (foundOre) {
+        genOres.splice(genOres.indexOf(foundOre), 1)
+        targetBlock = foundOre;
         ctx.clearRect(targetBlock.x, targetBlock.y, 25, 25)
         genOres.push(new OreDisplay(voidElement, targetBlock.x, targetBlock.y))
         generateOre(targetBlock.x, targetBlock.y - 25)
@@ -99,7 +121,23 @@ function showInfo(name) {
     if (oreFound.display) {
         toDisplay = oreFound.display
     }
-    document.querySelector("#oreInfo").innerHTML = `Name: ${capitalizeFirstLetter(toDisplay)}, Rarity: 1 in ${oreFound.rarity}`
+    document.querySelector("#oreInfo").innerHTML = `Name: ${capitalizeFirstLetter(toDisplay)}, Rarity: 1 in ${oreFound.rarity.toLocaleString("en-US")}`
+}
+
+function sortOreList() {
+    window.sortedOreNames = [...allOreNames]
+    sortedOreNames.sort((a, b) => {
+        if (a === "stone" || b === "stone" || a === "voidElement" || b === "voidElement") {
+            return 0;
+        }
+        if (eval(`${a}.rarity`) > eval(`${b}.rarity`)) {
+            return 1;
+        }
+        if (eval(`${a}.rarity`) < eval(`${b}.rarity`)) {
+            return -1;
+        }
+        throw "OreEngineError: Two ores have the same name"
+    })
 }
 
 // saving
@@ -133,14 +171,9 @@ function loadSave(code) {
         }
         eval(`${currentOre}Amt = ${i / 7}`)
         if (eval(`${currentOre}Amt`) > 0) {
-            document.querySelector(`#tx-${currentOre}`).removeAttribute("hidden")
-            document.querySelector(`#${currentOre}-counter`).innerHTML = eval(`${currentOre}Amt`)
             if (currentOre != "voidElement") {
                 oreNames.push(currentOre)
             }
-        } else {
-            document.querySelector(`#tx-${currentOre}`).setAttribute("hidden", "")
-            document.querySelector(`#${currentOre}-counter`).innerHTML = ""
         }
         index += 1
     }
@@ -199,9 +232,13 @@ let diamond = new Ore("diamond", 1000);
 let painite = new Ore("painite", 1500);
 let vyvyxyn = new Ore("vyvyxyn", 3000);
 // ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
-let crystal1 = new Ore("crystalresonance", 25000, "Crystal of Resonance")
+let crystalresonance = new Ore("crystalresonance", 25000, "Crystal of Resonance")
 let crysor = new Ore("crysor", 5000)
 let amethyst = new Ore("amethyst", 125)
+let fossil = new Ore("fossil", 900)
+let porvileon = new Ore("porvileon", 12500)
+
+sortOreList();
 
 function clearMine() {
     ctx.clearRect(0, 100, 1600, 800)
@@ -217,6 +254,8 @@ if (document.cookie) {
     loadSave(document.cookie.substring(5));
 }
 
+createAllDisplays();
+
 setInterval(changeFavicon, 5000);
 setInterval(generateSave, 20000);
 setTimeout(clearMine, 200);
@@ -226,6 +265,4 @@ window.onbeforeunload = function(){
     generateSave();
 }
 
-canvas.addEventListener("mousedown", click)
-
-
+$("#GAME").mousedown(click);

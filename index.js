@@ -7,6 +7,7 @@ let oreNames = ["stone"]
 let allOreNames = []
 let allOres = []
 let lastFavicon = "stone"
+let total = 0
 let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 if (isSafari) {
     alert("WARNING: This game is very glitchy on mobile.")
@@ -51,32 +52,37 @@ function addOre(type, amt) {
             createDisplay(type);
         }
     }
+    if (type !== "voidElement") {
+        total += 1;
+        $("#total-counter").html(`Total Ores Mined: ${total}`);
+    }
     eval(`document.querySelector("#${type}-counter").innerHTML = ${type}Amt`)
-
 }
 
-function createDisplay(name) {
-    $("aside").append(`
+function createDisplay(name, src="") {
+    let displayText = `
         <div class="ore-display-div" id="display-${name}">\n
             <button onclick="showInfo('${name}')">\n
                 <img src="assets/${name}.png">\n
             </button>\n
             <span id="${name}-counter">${eval(`${name}Amt`)}</span>\n
         </div>
-    `)
+    `;
+    if (src !== "load") {
+        $("#just-found").after(displayText);
+    } else {
+        $("#just-found").before(displayText);
+    }
     eval(`if (${name}.rarity > 1) {$("#display-${name}").addClass("common")}`)
-    eval(`if (${name}.rarity > 39) {$("#display-${name}").addClass("uncommon")}`)
+    eval(`if (${name}.rarity > 49) {$("#display-${name}").addClass("uncommon")}`)
     eval(`if (${name}.rarity > 299) {$("#display-${name}").addClass("rare")}`)
     eval(`if (${name}.rarity > 999) {$("#display-${name}").addClass("epic")}`)
-    eval(`if (${name}.rarity > 10000) {$("#display-${name}").addClass("unseen")}`)
-
-
-
+    eval(`if (${name}.rarity > 9999) {$("#display-${name}").addClass("unseen")}`)
 }
 
 function createAllDisplays() {
     for (i of sortedOreNames) {
-        eval(`if (${i}Amt >= 1) {createDisplay(i)}`);
+        eval(`if (${i}Amt >= 1) {createDisplay(i, "load")}`);
     }
     $("#display-voidElement").remove();
 }
@@ -122,6 +128,7 @@ function showInfo(name) {
         toDisplay = oreFound.display
     }
     document.querySelector("#oreInfo").innerHTML = `Name: ${capitalizeFirstLetter(toDisplay)}, Rarity: 1 in ${oreFound.rarity.toLocaleString("en-US")}`
+    document.querySelector("#oreDesc").innerHTML = oreFound.desc;
 }
 
 function sortOreList() {
@@ -136,7 +143,9 @@ function sortOreList() {
         if (eval(`${a}.rarity`) < eval(`${b}.rarity`)) {
             return -1;
         }
-        throw "OreEngineError: Two ores have the same name"
+        if (eval(`${a}.rarity`) = eval(`${b}.rarity`)) {
+            return 0;
+        }
     })
 }
 
@@ -170,6 +179,7 @@ function loadSave(code) {
             window.location = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
         }
         eval(`${currentOre}Amt = ${i / 7}`)
+        total += eval(`${currentOre}Amt`)
         if (eval(`${currentOre}Amt`) > 0) {
             if (currentOre != "voidElement") {
                 oreNames.push(currentOre)
@@ -177,6 +187,8 @@ function loadSave(code) {
         }
         index += 1
     }
+    total -= voidElementAmt
+    $("#total-counter").html(`Total Ores Mined: ${total}`);
 }
 
 // classes
@@ -187,6 +199,7 @@ class Ore {
         this.texture = document.querySelector(`#tx-${name}`);
         this.rarity = rarity;
         this.display = display;
+        this.desc = descs[name];
         if (name != "stone" && name != "voidElement") {
             this.append();
         } else if (name != "voidElement") {
@@ -220,7 +233,7 @@ class OreDisplay {
 // setup
 
 let stone = new Ore("stone", 1);
-let voidElement = new Ore("voidElement", 1);
+let voidElement = new Ore("voidElement", 1, "Void.");
 let copper = new Ore("copper", 15);
 let coal = new Ore("coal", 25);
 let iron = new Ore("iron", 40)
@@ -234,7 +247,7 @@ let vyvyxyn = new Ore("vyvyxyn", 3000);
 // ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
 let crystalresonance = new Ore("crystalresonance", 25000, "Crystal of Resonance")
 let crysor = new Ore("crysor", 5000)
-let amethyst = new Ore("amethyst", 125)
+let amethyst = new Ore("amethyst", 175)
 let fossil = new Ore("fossil", 900)
 let porvileon = new Ore("porvileon", 12500)
 

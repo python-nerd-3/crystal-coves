@@ -64,7 +64,7 @@ aside {
     /*this entire thing is all stack overflow code*/
 }
 
-#ore-header {
+#ore-header, #just-found {
     text-align: center;
     margin-top: 0;
     font-size: 3vw;
@@ -113,4 +113,16 @@ aside {
 
 .ore-display-div.unseen {
     border-color: rgb(125, 0, 255);
+}
+
+main {
+    margin-right: 22vw;
+    font-size: 24px;
+}
+
+#oreInfoContainer {
+    border: 10px solid gray;
+    border-radius: 50px;
+    padding: 10px;
+    width: 1600px;
 }

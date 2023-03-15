@@ -5,11 +5,14 @@
         <link rel="stylesheet" href="styles.css">
         <link id="favicon-link" rel="icon" type="image/png" href="assets/stone.png">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> 
+        <script src="data.js"></script>
         <script src="index.js" defer></script> 
     </head>
     <body>
         <aside>
             <h2 id="ore-header">Inventory</h2>
+            <h2 id="just-found">Just Found</h2>
+            <h2 id="total-counter">Total Ores Mined: 0</h2>
         </aside>
         <main>
             <canvas id="GAME" width="1600px" height="900px"></canvas>
@@ -34,7 +37,10 @@
                 <img src="assets/voidElement.png" id="tx-voidElement" hidden>               
                 <span id="voidElement-counter" hidden>you're not supposed to see this</span>
             </div>
-            <p id="oreInfo">Click on an ore image to view information about it</p>
+            <div id="oreInfoContainer">
+                <p id="oreInfo">Click on an ore image to view information about it</p>
+                <p id="oreDesc"></p>
+            </div>
             <br>
             <button onclick="clearMine()" class="button">Clear the mine</button>
             <br>
@@ -42,7 +48,6 @@
             <br>
             <button class="button"><a href="credits.html" class="noLinkFormat">Credits</a></button>
             <button class="button"><a href="bugs.html" class="noLinkFormat">Bugs</a></button>
-
         </main>
     </body>
 </html> 

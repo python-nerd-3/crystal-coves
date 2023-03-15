@@ -3,12 +3,14 @@ canvas {
     background-repeat: repeat;
     border: 10px solid gray;
 }
+
 body {
     background-color: black;
     color: white;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     margin: 0;
 }
+
 button, #oreInfo {
     font-size: 32px;
 }
@@ -64,8 +66,11 @@ aside {
     /*this entire thing is all stack overflow code*/
 }
 
-#ore-header, #just-found {
+#ore-header, #just-found, #total-counter {
     text-align: center;
+}
+
+#ore-header, #just-found {
     margin-top: 0;
     font-size: 3vw;
 }

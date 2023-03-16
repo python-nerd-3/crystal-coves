@@ -29,11 +29,9 @@ function capitalizeFirstLetter(val) {
 
 function generateOre(x, y) {
     let cont = true
-    for (i of genOres) {
-        if (i.x == x && i.y == y || y <= 75) {
-            cont = false
-            break;
-        }
+    let obstructingOre = genOres.find(z => (z.x == x && z.y == y))
+    if (obstructingOre || y <= 75 || y >= 900 || x <= -25 || x >= 1600) {
+        cont = false;
     }
     if (cont) {
         genOres.push(new OreDisplay(select(ores), x, y));
@@ -54,7 +52,7 @@ function addOre(type, amt) {
     }
     if (type !== "voidElement") {
         total += 1;
-        $("#total-counter").html(`Total Ores Mined: ${total}`);
+        $("#counter").html(total);
     }
     eval(`document.querySelector("#${type}-counter").innerHTML = ${type}Amt`)
 }
@@ -92,7 +90,6 @@ function createAllDisplays() {
 function click(event) {
     let targetBlock = null;
     let foundOre = genOres.find((z) => (event.pageX >= z.x + 10 && event.pageX <= z.x + 35 && event.pageY >= z.y + 10 && event.pageY <= z.y + 35)) 
-    console.log(foundOre)
     if (foundOre) {
         genOres.splice(genOres.indexOf(foundOre), 1)
         targetBlock = foundOre;
@@ -188,7 +185,7 @@ function loadSave(code) {
         index += 1
     }
     total -= voidElementAmt
-    $("#total-counter").html(`Total Ores Mined: ${total}`);
+    $("#counter").html(total);
 }
 
 // classes

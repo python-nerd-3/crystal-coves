@@ -130,8 +130,14 @@ main {
 }
 
 #oreInfoContainer {
-    border: 10px solid gray;
+    margin-top: 50px;
+    border: 15px solid gray;
     border-radius: 50px;
     padding: 10px;
     width: 1600px;
+}
+
+#counter {
+    color:rgb(125, 255, 125);
+    font-size: 4vw;
 }

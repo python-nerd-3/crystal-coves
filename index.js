@@ -170,7 +170,7 @@ function getOreInfo(name) {
 
 function showInfo(name) {
     let oreInfo = getOreInfo(name)
-    document.querySelector("#oreInfo").innerHTML = `Name: ${oreInfo.display}, Rarity: 1 in ${oreInfo.display}`
+    document.querySelector("#oreInfo").innerHTML = `Name: ${oreInfo.display}, Rarity: 1 in ${oreInfo.rarity}`
     document.querySelector("#oreDesc").innerHTML = oreInfo.desc;
 }
 

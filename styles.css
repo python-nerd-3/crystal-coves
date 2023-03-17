@@ -155,3 +155,8 @@ main {
 .unseen-text {
     color: rgb(125, 0, 255) 
 }
+
+#events {
+    font-size: 32px;
+    margin-left: 20px;
+}

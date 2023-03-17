@@ -8,6 +8,7 @@ let allOreNames = []
 let allOres = []
 let lastFavicon = "stone"
 let total = 0
+let totalLuck = 1
 let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 if (isSafari) {
     alert("WARNING: This game is very glitchy on mobile.")
@@ -54,11 +55,11 @@ function generateOre(x, y) {
     if (cont) {
         let randomOre = select(ores)
         genOres.push(new OreDisplay(randomOre, x, y));
-        if (randomOre.rarity > 999) {
+        if (randomOre.rarity * totalLuck > 998) {
             rarespawnSFX.playsfx();
             let oreInfo = getOreInfo(randomOre.name)
             $("#alert").html(`RARE SPAWN: ${oreInfo.display} has spawned! (1/${oreInfo.rarity})`)
-            if (oreInfo.rarity > 9999) {
+            if (oreInfo.rarity * totalLuck > 9998) {
                 $("#alert").addClass("unseen-text")
                 $("#alert").removeClass("epic-text")
             } else {
@@ -236,15 +237,16 @@ function loadSave(code) {
 // classes
 
 class Ore {
-    constructor(name, rarity, display = "") {
+    constructor(name, rarity, obtainable = true, display = "") {
         this.name = name;
         this.texture = document.querySelector(`#tx-${name}`);
-        this.rarity = rarity;
+        this.rarity = Math.floor(rarity / totalLuck);
         this.display = display;
         this.desc = descs[name];
-        if (name != "stone" && name != "voidElement") {
+        this.obtainable = obtainable;
+        if (name != "stone" && name != "voidElement" && obtainable) {
             this.append();
-        } else if (name != "voidElement") {
+        } else if (name == "stone") {
             ores = new Array(length).fill(this);
         }
         eval(`window.${name}Amt = 0`)
@@ -273,27 +275,51 @@ class OreDisplay {
     }
 }
 
+class GameEvent {
+    constructor(name, luck, string, expire) {
+        this.name = name;
+        this.luck = luck;
+        this.string = string
+        this.expire = expire
+        $("#events").append(string)
+        if (Date.now() < expire) {
+            totalLuck += luck - 1
+        }
+    }
+}
+
 // setup
 
+let stPatricksEvent = new GameEvent(
+    "St. Patricks Event", 1.25, 
+    "ST. PATRICKS EVENT: Extra luck & NEW Event Ore Patricine available until March 24 at noon EST",
+    1679673600000
+    )
+
 let stone = new Ore("stone", 1);
-let voidElement = new Ore("voidElement", 1, "Void.");
+let voidElement = new Ore("voidElement", 1, display = "Void.");
 let copper = new Ore("copper", 15);
 let coal = new Ore("coal", 25);
 let iron = new Ore("iron", 40)
 let lead = new Ore("lead", 65);
 let gold = new Ore("gold", 300);
-let relic = new Ore("relic", 500, "Bronze Relic");
+let relic = new Ore("relic", 500, display = "Bronze Relic");
 let emerald = new Ore("emerald", 750);
 let diamond = new Ore("diamond", 1000);
 let painite = new Ore("painite", 1500);
 let vyvyxyn = new Ore("vyvyxyn", 3000);
 // ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
-let crystalresonance = new Ore("crystalresonance", 25000, "Crystal of Resonance")
+let crystalresonance = new Ore("crystalresonance", 25000, display = "Crystal of Resonance")
 let crysor = new Ore("crysor", 5000)
+// Release
 let amethyst = new Ore("amethyst", 175)
+// 1.1
 let fossil = new Ore("fossil", 900)
 let porvileon = new Ore("porvileon", 12500)
+// 1.2
 let xyxyvylyn = new Ore("xyxyvylyn", 3000)
+// 1.2.1
+let patricine = new Ore("patricine", 3000, obtainable = true)
 
 sortOreList();
 

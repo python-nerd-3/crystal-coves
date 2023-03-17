@@ -13,6 +13,15 @@ if (isSafari) {
     alert("WARNING: This game is very glitchy on mobile.")
 }
 
+// music and sfx
+
+let music = new Audio("assets/sfx/music.mp3");
+let breakSFX = new Audio("assets/sfx/break.mp3");
+let rarespawnSFX = new Audio("assets/sfx/rarespawn.mp3")
+breakSFX.volume = 0.08;
+rarespawnSFX.volume = 1;
+music.loop = true;
+
 // QoL functions
 
 function select(array) {
@@ -24,6 +33,15 @@ function capitalizeFirstLetter(val) {
     return val.charAt(0).toUpperCase() + val.slice(1);
 }
 
+function playsfx() {
+    if (this.paused) {
+        this.play()
+    } else {
+        this.currentTime = 0;
+    }
+}
+
+Audio.prototype.playsfx = playsfx // appending to prototype normal dont work for some reason
 
 // ore manipulation & generation
 
@@ -34,7 +52,23 @@ function generateOre(x, y) {
         cont = false;
     }
     if (cont) {
-        genOres.push(new OreDisplay(select(ores), x, y));
+        let randomOre = select(ores)
+        genOres.push(new OreDisplay(randomOre, x, y));
+        if (randomOre.rarity > 999) {
+            rarespawnSFX.playsfx();
+            let oreInfo = getOreInfo(randomOre.name)
+            $("#alert").html(`RARE SPAWN: ${oreInfo.display} has spawned! (1/${oreInfo.rarity})`)
+            if (oreInfo.rarity > 9999) {
+                $("#alert").addClass("unseen-text")
+                $("#alert").removeClass("epic-text")
+            } else {
+                $("#alert").addClass("epic-text")
+                $("#alert").removeClass("unseen-text")
+            }
+            setTimeout(() => {
+                $("#alert").html("")
+            }, 10000)
+        }
     }
 }
 
@@ -88,9 +122,15 @@ function createAllDisplays() {
 // event handling
 
 function click(event) {
+    if (music.paused) {
+        music.play()
+    }
     let targetBlock = null;
     let foundOre = genOres.find((z) => (event.pageX >= z.x + 10 && event.pageX <= z.x + 35 && event.pageY >= z.y + 10 && event.pageY <= z.y + 35)) 
     if (foundOre) {
+        if (foundOre.type !== "voidElement") {
+            breakSFX.playsfx();
+        }
         genOres.splice(genOres.indexOf(foundOre), 1)
         targetBlock = foundOre;
         ctx.clearRect(targetBlock.x, targetBlock.y, 25, 25)
@@ -118,14 +158,19 @@ function changeFavicon() {
     lastFavicon = selectedOre
 }
 
-function showInfo(name) {
-    let toDisplay = name
+function getOreInfo(name) {
+    let toDisplay = capitalizeFirstLetter(name)
     let oreFound = allOres.find(x => x.name == name);
     if (oreFound.display) {
         toDisplay = oreFound.display
     }
-    document.querySelector("#oreInfo").innerHTML = `Name: ${capitalizeFirstLetter(toDisplay)}, Rarity: 1 in ${oreFound.rarity.toLocaleString("en-US")}`
-    document.querySelector("#oreDesc").innerHTML = oreFound.desc;
+    return {"display": toDisplay, "rarity": oreFound.rarity.toLocaleString("en-US"), "desc": oreFound.desc}
+}
+
+function showInfo(name) {
+    let oreInfo = getOreInfo(name)
+    document.querySelector("#oreInfo").innerHTML = `Name: ${oreInfo.display}, Rarity: 1 in ${oreInfo.display}`
+    document.querySelector("#oreDesc").innerHTML = oreInfo.desc;
 }
 
 function sortOreList() {
@@ -140,7 +185,7 @@ function sortOreList() {
         if (eval(`${a}.rarity`) < eval(`${b}.rarity`)) {
             return -1;
         }
-        if (eval(`${a}.rarity`) = eval(`${b}.rarity`)) {
+        if (eval(`${a}.rarity`) === eval(`${b}.rarity`)) {
             return 0;
         }
     })
@@ -220,6 +265,7 @@ class OreDisplay {
     constructor(parent, x, y) {
         this.type = parent.name;
         this.texture = parent.texture;
+        this.rarity = parent.rarity;
         this.x = x;
         this.y = y;
         ctx.beginPath();
@@ -247,6 +293,7 @@ let crysor = new Ore("crysor", 5000)
 let amethyst = new Ore("amethyst", 175)
 let fossil = new Ore("fossil", 900)
 let porvileon = new Ore("porvileon", 12500)
+let xyxyvylyn = new Ore("xyxyvylyn", 3000)
 
 sortOreList();
 

@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Crystal Coves</title>
         <link rel="stylesheet" href="styles.css">
         <link id="favicon-link" rel="icon" type="image/png" href="assets/stone.png">
@@ -15,6 +18,7 @@
             <h2 id="just-found">Just Found</h2>
         </aside>
         <main>
+            <h3 id="alert" class=""></h3>
             <canvas id="GAME" width="1600px" height="900px"></canvas>
             <br>
             <div id="ores">
@@ -34,9 +38,13 @@
                 <img src="assets/crysor.png" id="tx-crysor" hidden>
                 <img src="assets/porvileon.png" id="tx-porvileon" hidden>
                 <img src="assets/crystalresonance.png" id="tx-crystalresonance" hidden>
-                <img src="assets/voidElement.png" id="tx-voidElement" hidden>               
+                <img src="assets/voidElement.png" id="tx-voidElement" hidden>              
+                <img src="assets/xyxyvylyn.png" id="tx-xyxyvylyn" hidden> 
                 <span id="voidElement-counter" hidden>you're not supposed to see this</span>
             </div>
+            <span id="audio">
+                <audio src="assets/sfx/music.mp3" hidden></audio>
+            </span>
             <div id="oreInfoContainer">
                 <p id="oreInfo">Click on an ore image to view information about it</p>
                 <p id="oreDesc"></p>

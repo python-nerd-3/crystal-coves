@@ -141,3 +141,17 @@ main {
     color:rgb(125, 255, 125);
     font-size: 4vw;
 }
+
+#alert {
+    position: absolute;
+    left: 40px;
+    font-size: 40px;
+}
+
+.epic-text {
+    color: rgb(255, 255, 0)
+}
+
+.unseen-text {
+    color: rgb(125, 0, 255) 
+}

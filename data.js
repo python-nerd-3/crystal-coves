@@ -16,5 +16,5 @@ let descs = {
     "xyxyvylyn": "Xyxyvylyn is an ore. this is temporary description",
     "crysor": "Crysor is a very cold material. Apparently dogs like to lick it for some reason. We think the reason is because it feels good on their snoot. (Idea, design, and description by Samuel Green)",
     "porvileon": "Porvileon sends objects who touch it into another dimension. Nobody knows where it goes because humans can't fit through it. Many theories have sparked of where it goes. Some notable ones are The End, planet Y78aÆg.j, or to the 4th dimension. (Idea and design by Samuel Green)",
-    "crystalresonance": "The Crystal of Resonance. Cool &#128077;",
+    "crystalresonance": "The Crystal of Resonance. Cool &#128077;"
 }

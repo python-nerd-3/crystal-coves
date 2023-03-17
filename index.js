@@ -107,10 +107,10 @@ function createDisplay(name, src="") {
         $("#just-found").before(displayText);
     }
     eval(`if (${name}.rarity > 1) {$("#display-${name}").addClass("common")}`)
-    eval(`if (${name}.rarity > 49) {$("#display-${name}").addClass("uncommon")}`)
-    eval(`if (${name}.rarity > 299) {$("#display-${name}").addClass("rare")}`)
-    eval(`if (${name}.rarity > 999) {$("#display-${name}").addClass("epic")}`)
-    eval(`if (${name}.rarity > 9999) {$("#display-${name}").addClass("unseen")}`)
+    eval(`if (${name}.rarity * totalLuck > 48) {$("#display-${name}").addClass("uncommon")}`)
+    eval(`if (${name}.rarity * totalLuck > 298) {$("#display-${name}").addClass("rare")}`)
+    eval(`if (${name}.rarity * totalLuck > 998) {$("#display-${name}").addClass("epic")}`)
+    eval(`if (${name}.rarity * totalLuck > 9998) {$("#display-${name}").addClass("unseen")}`)
 }
 
 function createAllDisplays() {

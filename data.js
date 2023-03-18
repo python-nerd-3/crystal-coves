@@ -13,8 +13,8 @@ let descs = {
     "fossil": "Remember when we said coal was dead dino? This must be a dino put in an eternal fate of suffering. Wait, I know what killed the dinos! It was capitalism, look at the oil! (Idea by Samuel Green)",
     "painite": "Red, rare, reveres alliteration, really just cooler than rubies, why am i doing alliteration? What are rubies? They aren't in this mine! (Designed by Samuel Green)",
     "vyvyxyn": "Vyvyxyn is a colorful ore representing the six colors of rainbow due to its formation from prismatic crystals. Yes, there are 6 colors, fun fact Issac Newton added indigo because he wanted them to be 7 colors for good luck. (Designed by Samuel Green)",
-    "xyxyvylyn": "Xyxyvylyn is a dark counterpart of Vyvyxyn. Sometimes it is grinded into a very expensive and spicy salt and used in trace amounts to give extra spice to meals. Eating too much can make you act edgy or like a Roblox roleplayer.",
-    "patricine": "Placeholder Description",
+    "xyxyvylyn": "Xyxyvylyn is a dark counterpart of Vyvyxyn. Sometimes it is grinded into a very expensive and spicy salt and used in trace amounts to give extra spice to meals. Eating too much can make you act edgy or like a Roblox roleplayer. (Designed by Samuel Green)",
+    "patricine": "Patricine is said to make anyone who gets near it lucky. Over time its effects seem have to been deteriorating, but it is still actively giving miners near it some better luck.",
     "crysor": "Crysor is a very cold material. Apparently dogs like to lick it for some reason. We think the reason is because it feels good on their snoot. (Idea, design, and description by Samuel Green)",
     "porvileon": "Porvileon sends objects who touch it into another dimension. Nobody knows where it goes because humans can't fit through it. Many theories have sparked of where it goes. Some notable ones are The End, planet Y78aÆg.j, or to the 4th dimension. (Idea and design by Samuel Green)",
     "crystalresonance": "The Crystal of Resonance. Cool &#128077;"

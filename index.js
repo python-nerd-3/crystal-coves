@@ -281,8 +281,8 @@ class GameEvent {
         this.luck = luck;
         this.string = string
         this.expire = expire
-        $("#events").append(string)
         if (Date.now() < expire) {
+            $("#events").append(string)
             totalLuck += luck - 1
         }
     }

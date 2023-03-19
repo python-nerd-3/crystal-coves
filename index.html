@@ -18,12 +18,15 @@
             <h2 id="just-found">Just Found</h2>
         </aside>
         <main>
+            <button class="ui-button" onclick="clearMine()"><img src="assets/ui/clear.png" width="50" height="50"></button>
+            <button class="ui-button" id="save-btn" onclick="generateSave()"><img src="assets/ui/save.png" width="50" height="50"></button>
             <h3 id="alert" class=""></h3>
             <canvas id="GAME" width="1600px" height="900px"></canvas>
             <br>
             <div id="events">
                 
             </div>
+            <!--If you're opening in Inspect Element: Contains spoilers-->
             <div id="ores">
                 <img src="assets/stone.png" id="tx-stone" hidden>
                 <img src="assets/copper.png" id="tx-copper" hidden>
@@ -53,10 +56,6 @@
                 <p id="oreInfo">Click on an ore image to view information about it</p>
                 <p id="oreDesc"></p>
             </div>
-            <br>
-            <button onclick="clearMine()" class="button">Clear the mine</button>
-            <br>
-            <button onclick="generateSave()" class="button" id="save">Save (autosave every 20 secs)</button>
             <br>
             <button class="button"><a href="credits.html" class="noLinkFormat">Credits</a></button>
             <button class="button"><a href="bugs.html" class="noLinkFormat">Bugs</a></button>

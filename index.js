@@ -98,7 +98,7 @@ function createDisplay(name, src="") {
             <button onclick="showInfo('${name}')">\n
                 <img src="assets/${name}.png">\n
             </button>\n
-            <span id="${name}-counter">${eval(`${name}Amt`)}</span>\n
+            <span id="${name}-counter" class="ore-counter">${eval(`${name}Amt`)}</span>\n
         </div>
     `;
     if (src !== "load") {
@@ -106,7 +106,6 @@ function createDisplay(name, src="") {
     } else {
         $("#just-found").before(displayText);
     }
-    console.log("${}")
     eval(`if (${name}.rarity > 1) {$("#display-${name}").addClass("common")}`)
     eval(`if (${name}.rarity * totalLuck > 48) {$("#display-${name}").addClass("uncommon")}`)
     eval(`if (${name}.rarity * totalLuck > 298) {$("#display-${name}").addClass("rare")}`)
@@ -252,6 +251,9 @@ class Ore {
         for (let i in properties) {
             this.properties[i] = properties[i]
         } // this is like my first time using an in loop
+        if (this.properties["event"].expire < Date.now()) {
+            this.properties["obtainable"] = false;
+        }
         this.desc = descs[name];
         if (name != "stone" && name != "voidElement" && this.properties["obtainable"]) {
             this.append();
@@ -328,7 +330,7 @@ let porvileon = new Ore("porvileon", 12500)
 // 1.2
 let xyxyvylyn = new Ore("xyxyvylyn", 3000)
 // 1.2.1
-let patricine = new Ore("patricine", 3000, {obtainable: true, event: true})
+let patricine = new Ore("patricine", 3000, {obtainable: true, event: stPatricksEvent})
 // 1.3
 let cobalt = new Ore("cobalt", 4000, {display: "Cobalt-60"})
 let mysalin = new Ore("mysalin", 15000)

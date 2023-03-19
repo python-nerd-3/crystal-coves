@@ -19,11 +19,6 @@ span {
     font-size: 48px;
 }
 
-img {
-    width: 48px;
-    height: 48px;
-}
-
 button:not(.button) {
     visibility: hidden;
     width: fit-content;
@@ -101,7 +96,9 @@ aside {
 
 .ore-display-div>span {
     margin-left: 6vw;
-    font-size: 5vw;
+    font-size: 4vw;
+    margin-top: 0.5vw;
+    margin-bottom: 0.5vw;
 }
 
 .ore-display-div.common {
@@ -176,4 +173,38 @@ main {
 
 .event-text {
     color: rgb(255, 255, 150)
+}
+
+.ui-button {
+    position: absolute;
+    left: 1620px;
+    top: 10px;
+}
+
+#save-btn {
+    top: 60px;
+}
+
+.ore-counter {
+    display: inline-block;
+}
+
+a:link {
+    color: rgb(127, 127, 255)
+}
+
+a:hover {
+    color: rgb(127, 127, 200)
+}
+
+a:visited {
+    color: rgb(125, 0, 255)
+}
+
+a {
+    color: rgb(127, 127, 255)
+}
+
+body#side-page {
+    margin: 2%;
 }

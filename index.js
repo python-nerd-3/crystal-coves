@@ -1,4 +1,4 @@
-let canvas = document.querySelector("#GAME")
+let canvas = $("#GAME")[0]
 let ctx = canvas.getContext("2d")
 let length = 100000
 let ores = ["HEY SOMETING BRONK"]
@@ -106,11 +106,13 @@ function createDisplay(name, src="") {
     } else {
         $("#just-found").before(displayText);
     }
+    console.log("${}")
     eval(`if (${name}.rarity > 1) {$("#display-${name}").addClass("common")}`)
     eval(`if (${name}.rarity * totalLuck > 48) {$("#display-${name}").addClass("uncommon")}`)
     eval(`if (${name}.rarity * totalLuck > 298) {$("#display-${name}").addClass("rare")}`)
     eval(`if (${name}.rarity * totalLuck > 998) {$("#display-${name}").addClass("epic")}`)
     eval(`if (${name}.rarity * totalLuck > 9998) {$("#display-${name}").addClass("unseen")}`)
+    eval(`if (${name}.properties["event"]) {$("#${name}-counter").addClass("event-text")}`)
 }
 
 function createAllDisplays() {
@@ -162,10 +164,15 @@ function changeFavicon() {
 function getOreInfo(name) {
     let toDisplay = capitalizeFirstLetter(name)
     let oreFound = allOres.find(x => x.name == name);
-    if (oreFound.display) {
-        toDisplay = oreFound.display
+    let toDisplayRarity = oreFound.rarity.toLocaleString("en-US")
+    if (oreFound.rarity <= 1) {
+        toDisplayRarity = "Base"
     }
-    return {"display": toDisplay, "rarity": oreFound.rarity.toLocaleString("en-US"), "desc": oreFound.desc}
+
+    if (oreFound.properties["display"]) {
+        toDisplay = oreFound.properties["display"]
+    }
+    return {"display": toDisplay, "rarity": toDisplayRarity, "desc": oreFound.desc}
 }
 
 function showInfo(name) {
@@ -237,14 +244,16 @@ function loadSave(code) {
 // classes
 
 class Ore {
-    constructor(name, rarity, obtainable = true, display = "") {
+    constructor(name, rarity, properties = {obtainable: true}) {
         this.name = name;
         this.texture = document.querySelector(`#tx-${name}`);
         this.rarity = Math.floor(rarity / totalLuck);
-        this.display = display;
+        this.properties = {display: "", obtainable: true, event: false}
+        for (let i in properties) {
+            this.properties[i] = properties[i]
+        } // this is like my first time using an in loop
         this.desc = descs[name];
-        this.obtainable = obtainable;
-        if (name != "stone" && name != "voidElement" && obtainable) {
+        if (name != "stone" && name != "voidElement" && this.properties["obtainable"]) {
             this.append();
         } else if (name == "stone") {
             ores = new Array(length).fill(this);
@@ -297,19 +306,19 @@ let stPatricksEvent = new GameEvent(
     )
 
 let stone = new Ore("stone", 1);
-let voidElement = new Ore("voidElement", 1, display = "Void.");
+let voidElement = new Ore("voidElement", 1, {display: "Void."});
 let copper = new Ore("copper", 15);
 let coal = new Ore("coal", 25);
 let iron = new Ore("iron", 40)
 let lead = new Ore("lead", 65);
 let gold = new Ore("gold", 300);
-let relic = new Ore("relic", 500, display = "Bronze Relic");
+let relic = new Ore("relic", 500, {display: "Bronze Relic"});
 let emerald = new Ore("emerald", 750);
 let diamond = new Ore("diamond", 1000);
 let painite = new Ore("painite", 1500);
 let vyvyxyn = new Ore("vyvyxyn", 3000);
 // ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
-let crystalresonance = new Ore("crystalresonance", 25000, display = "Crystal of Resonance")
+let crystalresonance = new Ore("crystalresonance", 25000, {display: "Crystal of Resonance"})
 let crysor = new Ore("crysor", 5000)
 // Release
 let amethyst = new Ore("amethyst", 175)
@@ -319,7 +328,11 @@ let porvileon = new Ore("porvileon", 12500)
 // 1.2
 let xyxyvylyn = new Ore("xyxyvylyn", 3000)
 // 1.2.1
-let patricine = new Ore("patricine", 3000, obtainable = true)
+let patricine = new Ore("patricine", 3000, {obtainable: true, event: true})
+// 1.3
+let cobalt = new Ore("cobalt", 4000, {display: "Cobalt-60"})
+let mysalin = new Ore("mysalin", 15000)
+
 
 sortOreList();
 

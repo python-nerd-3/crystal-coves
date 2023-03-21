@@ -6,4 +6,4 @@ github aggressively wants me to add a readme help i am being held hostage to add
 
 ABOVE IS JOKE!
 
-CURRENT ORES: 21(including technical ores)
+CURRENT ORES: 21 (including technical ores)

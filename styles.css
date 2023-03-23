@@ -1,5 +1,5 @@
 canvas {
-    background-image: url("assets/background.png");
+    background-image: url("assets/misc/background.png");
     background-repeat: repeat;
     border: 10px solid gray;
 }
@@ -39,7 +39,6 @@ button:not(.button)::-moz-selection {
 button:not(.button)>* {
     visibility: visible;
 }
-
 
 a.noLinkFormat { color: black; text-decoration: none;}
 a.noLinkFormat:link { color: black; text-decoration: none;}
@@ -185,6 +184,7 @@ main {
     top: 60px;
 }
 
+
 .ore-counter {
     display: inline-block;
 }
@@ -207,4 +207,15 @@ a {
 
 body#side-page {
     margin: 2%;
+}
+
+#buggymanourlordandsaviorheisagodofthisworld {
+    /*buggyman is god we all love buggyman we shall all worship buggyman dont change this id*/
+    top: 110px;
+}
+
+#time {
+    position: absolute;
+    left: 1540px;
+    top: 10px;
 }

@@ -18,8 +18,10 @@
             <h2 id="just-found">Just Found</h2>
         </aside>
         <main>
+            <img id="time" src="assets/misc/sun.png" width="66" height="66">
             <button class="ui-button" onclick="clearMine()"><img src="assets/ui/clear.png" width="50" height="50"></button>
             <button class="ui-button" id="save-btn" onclick="generateSave()"><img src="assets/ui/save.png" width="50" height="50"></button>
+            <a href="./bugs.html"><button class="ui-button" id="buggymanourlordandsaviorheisagodofthisworld"><img src="assets/ui/buggyman.png" width="50" height="50"></button></a>
             <h3 id="alert" class=""></h3>
             <canvas id="GAME" width="1600px" height="900px"></canvas>
             <br>
@@ -28,28 +30,34 @@
             </div>
             <!--If you're opening in Inspect Element: Contains spoilers-->
             <div id="ores">
-                <img src="assets/stone.png" id="tx-stone" hidden>
-                <img src="assets/copper.png" id="tx-copper" hidden>
-                <img src="assets/coal.png" id="tx-coal" hidden>
-                <img src="assets/iron.png" id="tx-iron" hidden>
-                <img src="assets/lead.png" id="tx-lead" hidden>
-                <img src="assets/amethyst.png" id="tx-amethyst" hidden>
-                <img src="assets/gold.png" id="tx-gold" hidden>
-                <img src="assets/relic.png" id="tx-relic" hidden>
-                <img src="assets/emerald.png" id="tx-emerald" hidden>
-                <img src="assets/fossil.png" id="tx-fossil" hidden>
-                <img src="assets/diamond.png" id="tx-diamond" hidden>
-                <img src="assets/painite.png" id="tx-painite" hidden>
-                <img src="assets/vyvyxyn.png" id="tx-vyvyxyn" hidden>
-                <img src="assets/crysor.png" id="tx-crysor" hidden>
-                <img src="assets/porvileon.png" id="tx-porvileon" hidden>
-                <img src="assets/crystalresonance.png" id="tx-crystalresonance" hidden>
-                <img src="assets/voidElement.png" id="tx-voidElement" hidden>              
-                <img src="assets/xyxyvylyn.png" id="tx-xyxyvylyn" hidden> 
-                <img src="assets/patricine.png" id="tx-patricine" hidden> 
-                <img src="assets/cobalt.png" id="tx-cobalt" hidden> 
-                <img src="assets/mysalin.png" id="tx-mysalin" hidden> 
-                <span id="voidElement-counter" hidden>you're not supposed to see this</span>
+                <img src="assets/ores/stone.png" id="tx-stone" hidden>
+                <img src="assets/ores/copper.png" id="tx-copper" hidden>
+                <img src="assets/ores/coal.png" id="tx-coal" hidden>
+                <img src="assets/ores/iron.png" id="tx-iron" hidden>
+                <img src="assets/ores/lead.png" id="tx-lead" hidden>
+                <img src="assets/ores/amethyst.png" id="tx-amethyst" hidden>
+                <img src="assets/ores/gold.png" id="tx-gold" hidden>
+                <img src="assets/ores/relic.png" id="tx-relic" hidden>
+                <img src="assets/ores/emerald.png" id="tx-emerald" hidden>
+                <img src="assets/ores/fossil.png" id="tx-fossil" hidden>
+                <img src="assets/ores/diamond.png" id="tx-diamond" hidden>
+                <img src="assets/ores/painite.png" id="tx-painite" hidden>
+                <img src="assets/ores/vyvyxyn.png" id="tx-vyvyxyn" hidden>
+                <img src="assets/ores/crysor.png" id="tx-crysor" hidden>
+                <img src="assets/ores/porvileon.png" id="tx-porvileon" hidden>
+                <img src="assets/ores/crystalresonance.png" id="tx-crystalresonance" hidden>
+                <img src="assets/ores/voidElement.png" id="tx-voidElement" hidden>              
+                <img src="assets/ores/xyxyvylyn.png" id="tx-xyxyvylyn" hidden> 
+                <img src="assets/ores/patricine.png" id="tx-patricine" hidden> 
+                <img src="assets/ores/cobalt.png" id="tx-cobalt" hidden> 
+                <img src="assets/ores/mysalin.png" id="tx-mysalin" hidden>
+                <img src="assets/ores/basalt.png" id="tx-basalt" hidden>  
+                <img src="assets/ores/magma.png" id="tx-magma" hidden>  
+                <img src="assets/ores/chilledamethyst.png" id="tx-chilledamethyst" hidden>  
+                <img src="assets/ores/infernalgold.png" id="tx-infernalgold" hidden>
+                <img src="assets/ores/astralcrystal.png" id="tx-astralcrystal" hidden>
+                <img src="assets/ores/divinecrystal.png" id="tx-divinecrystal" hidden>
+                <span id="voidElement-counter" hidden></span> <!--DO NOT REMOVE, this is so the js has a counter to refer to-->
             </div>
             
             <div id="oreInfoContainer">
@@ -57,8 +65,7 @@
                 <p id="oreDesc"></p>
             </div>
             <br>
-            <button class="button"><a href="credits.html" class="noLinkFormat">Credits</a></button>
-            <button class="button"><a href="bugs.html" class="noLinkFormat">Bugs</a></button>
+            <a href="credits.html" class="noLinkFormat"><img src="assets/ui/credits.png" height="75"></a>
         </main>
     </body>
 </html> 

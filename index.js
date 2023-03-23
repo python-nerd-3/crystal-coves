@@ -1,6 +1,6 @@
 let canvas = $("#GAME")[0]
 let ctx = canvas.getContext("2d")
-let length = 100000
+let length = 120000
 let ores = ["HEY SOMETING BRONK"]
 let moves = []
 let oreNames = ["stone"]
@@ -14,6 +14,10 @@ if (isSafari) {
     alert("WARNING: This game is very glitchy on mobile.")
 }
 
+/* NOTES 
+    ~~ is the same as Math.floor but faster
+*/
+
 // music and sfx
 
 let music = new Audio("assets/sfx/music.mp3");
@@ -26,7 +30,7 @@ music.loop = true;
 // QoL functions
 
 function select(array) {
-    let randint = Math.floor(Math.random() * array.length)
+    let randint = ~~(Math.random() * array.length)
     return array[randint]
 }
 
@@ -54,6 +58,13 @@ function generateOre(x, y) {
     }
     if (cont) {
         let randomOre = select(ores)
+        let date = new Date()
+        if (randomOre.properties["time"] == "day" && ~~(date.getMinutes() / 10) % 2 == 1) {
+            randomOre = stone;
+        }
+        if (randomOre.properties["time"] == "night" && ~~(date.getMinutes() / 10) % 2 == 0) {
+            randomOre = stone;
+        }
         genOres.push(new OreDisplay(randomOre, x, y));
         if (randomOre.rarity * totalLuck > 998) {
             rarespawnSFX.playsfx();
@@ -96,7 +107,7 @@ function createDisplay(name, src="") {
     let displayText = `
         <div class="ore-display-div" id="display-${name}">\n
             <button onclick="showInfo('${name}')">\n
-                <img src="assets/${name}.png">\n
+                <img src="assets/ores/${name}.png">\n
             </button>\n
             <span id="${name}-counter" class="ore-counter">${eval(`${name}Amt`)}</span>\n
         </div>
@@ -146,6 +157,15 @@ function click(event) {
 }
 
 // misc functions
+
+function getTime() {
+    let date = new Date();
+    if (~~(date.getMinutes() / 10) % 2 == 0) {
+        $("#time").attr("src", "assets/misc/sun.png")
+    } else {
+        $("#time").attr("src", "assets/misc/moon.png")
+    }
+}
 
 function changeFavicon() {
     selectedOre = lastFavicon
@@ -246,8 +266,8 @@ class Ore {
     constructor(name, rarity, properties = {obtainable: true}) {
         this.name = name;
         this.texture = document.querySelector(`#tx-${name}`);
-        this.rarity = Math.floor(rarity / totalLuck);
-        this.properties = {display: "", obtainable: true, event: false}
+        this.rarity = ~~(rarity / totalLuck);
+        this.properties = {display: "", obtainable: true, event: false, time: "any"}
         for (let i in properties) {
             this.properties[i] = properties[i]
         } // this is like my first time using an in loop
@@ -266,10 +286,10 @@ class Ore {
     }
 
     append() {
-        let amt = ores.length / this.rarity
+        let amt = length / this.rarity
         let index = length - amt
         length -= amt
-        let items = new Array(Math.floor(amt)).fill(this)
+        let items = new Array(~~(amt)).fill(this)
         ores.splice(index, amt, ...items)
     }
 }
@@ -320,13 +340,13 @@ let diamond = new Ore("diamond", 1000);
 let painite = new Ore("painite", 1500);
 let vyvyxyn = new Ore("vyvyxyn", 3000);
 // ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
-let crystalresonance = new Ore("crystalresonance", 25000, {display: "Crystal of Resonance"})
+let crystalresonance = new Ore("crystalresonance", 24000, {display: "Crystal of Resonance"})
 let crysor = new Ore("crysor", 5000)
 // Release
 let amethyst = new Ore("amethyst", 175)
 // 1.1
 let fossil = new Ore("fossil", 900)
-let porvileon = new Ore("porvileon", 12500)
+let porvileon = new Ore("porvileon", 12000)
 // 1.2
 let xyxyvylyn = new Ore("xyxyvylyn", 3000)
 // 1.2.1
@@ -334,7 +354,13 @@ let patricine = new Ore("patricine", 3000, {obtainable: true, event: stPatricksE
 // 1.3
 let cobalt = new Ore("cobalt", 4000, {display: "Cobalt-60"})
 let mysalin = new Ore("mysalin", 15000)
-
+// 2.0
+let basalt = new Ore("basalt", 200, {time: "night"})
+let magma = new Ore("magma", 200, {time: "day"})
+let chilledamethyst = new Ore("chilledamethyst", 3750, {time: "night", display: "Chilled Amethyst"})
+let infernalgold = new Ore("infernalgold", 3750, {time: "day", display: "Infernal Gold"})
+let astralcrystal = new Ore("astralcrystal", 60000, {time: "night", display: "&#9789; Astral Crystal &#9790;"})
+let divinecrystal = new Ore("divinecrystal", 60000, {time: "day", display: "&#9788; Divine Crystal &#9788;"})
 
 sortOreList();
 
@@ -356,6 +382,7 @@ createAllDisplays();
 
 setInterval(changeFavicon, 5000);
 setInterval(generateSave, 20000);
+setInterval(getTime, 1000)
 setTimeout(clearMine, 200);
 
 

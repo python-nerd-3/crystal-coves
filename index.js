@@ -69,7 +69,7 @@ function generateOre(x, y) {
         if (randomOre.rarity * totalLuck > 998) {
             rarespawnSFX.playsfx();
             let oreInfo = getOreInfo(randomOre.name)
-            $("#alert").html(`RARE ORE: ${oreInfo.display} has spawned! (1/${oreInfo.rarity})`)
+            $("#alert").html(`RARE ORE: ${oreInfo.display} has spawned! (1/${oreInfo.display})`)
             if (oreInfo.rarity * totalLuck > 9998) {
                 $("#alert").addClass("unseen-text")
                 $("#alert").removeClass("epic-text")
@@ -196,7 +196,7 @@ function getOreInfo(name) {
 
 function showInfo(name) {
     let oreInfo = getOreInfo(name)
-    document.querySelector("#oreInfo").innerHTML = `Name: ${oreInfo.display}, Rarity: 1 in ${oreInfo.rarity}`
+    document.querySelector("#oreInfo").innerHTML = `Name: ${oreInfo.display}, Rarity: 1 in ${oreInfo.display}`
     document.querySelector("#oreDesc").innerHTML = oreInfo.desc;
 }
 
@@ -327,6 +327,11 @@ let stPatricksEvent = new GameEvent(
     1679673600000
     )
 
+let aprilFoolsEvent = new GameEvent(
+    "APRIL FEWLS", 1,
+    "the best update is out", 1680451200000
+)
+
 let stone = new Ore("stone", 1);
 let voidElement = new Ore("voidElement", 1, {display: "Void."});
 let copper = new Ore("copper", 15);
@@ -350,7 +355,7 @@ let porvileon = new Ore("porvileon", 12000)
 // 1.2
 let xyxyvylyn = new Ore("xyxyvylyn", 3000)
 // 1.2.1
-let patricine = new Ore("patricine", 3000, {obtainable: true, event: stPatricksEvent})
+let patricine = new Ore("patricine", 3000, {event: stPatricksEvent})
 // 1.3
 let cobalt = new Ore("cobalt", 4000, {display: "Cobalt-60"})
 let mysalin = new Ore("mysalin", 15000)
@@ -361,6 +366,10 @@ let chilledamethyst = new Ore("chilledamethyst", 3750, {time: "night", display: 
 let infernalgold = new Ore("infernalgold", 3750, {time: "day", display: "Infernal Gold"})
 let astralcrystal = new Ore("astralcrystal", 60000, {time: "night", display: "&#9789; Astral Crystal &#9790;"})
 let divinecrystal = new Ore("divinecrystal", 60000, {time: "day", display: "&#9788; Divine Crystal &#9788;"})
+
+// april fewls
+let thefunny = new Ore("thefunny", 300, {display: "THE FUNNIEST ORE IN ALL OF CRYSTAL COVES", event: aprilFoolsEvent})
+let mrbeastore = new Ore("mrbeastore", 2500, {event: aprilFoolsEvent})
 
 sortOreList();
 

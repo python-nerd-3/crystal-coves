@@ -26,4 +26,7 @@ let descs = {
     "crystalresonance": "The Crystal of Resonance. Cool &#128077;",
     "astralcrystal": "The Astral Crystal gets a placeholder description. (Idea and design by Samuel Green)",
     "divinecrystal": "The Divine Crystal is one of the rarest ores ever discovered. It is known for its (literally) blinding lights from the power of the sun. Rumor has it that the only thing brighter than it is Discord light mode. The beams from the side of the core provides all of this energy. (Idea and design by Samuel Green)",
+
+    "thefunny": "HEHEHEHEHEHEHE",
+    "mrbeastore": "rumor hase it this ore gives you 1000000000000 gold and 999 iron"
 }

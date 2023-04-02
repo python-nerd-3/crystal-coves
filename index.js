@@ -69,7 +69,7 @@ function generateOre(x, y) {
         if (randomOre.rarity * totalLuck > 998) {
             rarespawnSFX.playsfx();
             let oreInfo = getOreInfo(randomOre.name)
-            $("#alert").html(`RARE ORE: ${oreInfo.display} has spawned! (1/${oreInfo.display})`)
+            $("#alert").html(`RARE ORE: ${oreInfo.display} has spawned! (1/${oreInfo.rarity})`)
             if (oreInfo.rarity * totalLuck > 9998) {
                 $("#alert").addClass("unseen-text")
                 $("#alert").removeClass("epic-text")
@@ -196,7 +196,7 @@ function getOreInfo(name) {
 
 function showInfo(name) {
     let oreInfo = getOreInfo(name)
-    document.querySelector("#oreInfo").innerHTML = `Name: ${oreInfo.display}, Rarity: 1 in ${oreInfo.display}`
+    document.querySelector("#oreInfo").innerHTML = `Name: ${oreInfo.display}, Rarity: 1 in ${oreInfo.rarity}`
     document.querySelector("#oreDesc").innerHTML = oreInfo.desc;
 }
 

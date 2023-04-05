@@ -9,6 +9,8 @@ let allOres = []
 let lastFavicon = "stone"
 let total = 0
 let totalLuck = 1
+let oreDict = {}
+let sidebarOpen = true
 let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 if (isSafari) {
     alert("WARNING: This game is very glitchy on mobile.")
@@ -23,6 +25,7 @@ if (isSafari) {
 let music = new Audio("assets/sfx/music.mp3");
 let breakSFX = new Audio("assets/sfx/break.mp3");
 let rarespawnSFX = new Audio("assets/sfx/rarespawn.mp3")
+let unseenSFX = new Audio("assets/sfx/unseen.mp3")
 breakSFX.volume = 0.08;
 rarespawnSFX.volume = 1;
 music.loop = true;
@@ -66,16 +69,18 @@ function generateOre(x, y) {
             randomOre = stone;
         }
         genOres.push(new OreDisplay(randomOre, x, y));
-        if (randomOre.rarity * totalLuck > 998) {
-            rarespawnSFX.playsfx();
+        if (randomOre.rarity * totalLuck >= 999) {
             let oreInfo = getOreInfo(randomOre.name)
-            $("#alert").html(`RARE ORE: ${oreInfo.display} has spawned! (1/${oreInfo.rarity})`)
-            if (oreInfo.rarity * totalLuck > 9998) {
+            $("#alert").html(`RARE ORE: ${oreInfo.display} has spawned! (1/${oreInfo.rarity.toLocaleString("en-us")})`)
+            if (oreInfo.rarity * totalLuck >= 9999) {
                 $("#alert").addClass("unseen-text")
                 $("#alert").removeClass("epic-text")
+                unseenSFX.playsfx();
             } else {
+                console.log(oreInfo.rarity)
                 $("#alert").addClass("epic-text")
                 $("#alert").removeClass("unseen-text")
+                rarespawnSFX.playsfx();
             }
             setTimeout(() => {
                 $("#alert").html("")
@@ -85,10 +90,8 @@ function generateOre(x, y) {
 }
 
 function addOre(type, amt) {
-    let discovered = false;
-    eval(`${type}Amt += ${amt}`)
-    eval(`if (${type}Amt === 1) {discovered = true}`)
-    if (discovered) {
+    oreDict[type].amt += amt
+    if (oreDict[type].amt === amt) {
         if (type !== "stone" && type !== "voidElement") {
             oreNames.push(type)
         }
@@ -97,11 +100,16 @@ function addOre(type, amt) {
         }
     }
     if (type !== "voidElement") {
-        total += 1;
+        total += amt;
         $("#counter").html(total);
     }
-    eval(`document.querySelector("#${type}-counter").innerHTML = ${type}Amt`)
+    if (oreDict[type].rarity >= 3000) {
+        generateSave();
+    }
+    $(`#${type}-counter`).html(oreDict[type].amt)
 }
+
+// sidebar
 
 function createDisplay(name, src="") {
     let displayText = `
@@ -109,25 +117,29 @@ function createDisplay(name, src="") {
             <button onclick="showInfo('${name}')">\n
                 <img src="assets/ores/${name}.png">\n
             </button>\n
-            <span id="${name}-counter" class="ore-counter">${eval(`${name}Amt`)}</span>\n
+            <span id="${name}-counter" class="ore-counter">${oreDict[name].amt}</span>\n
         </div>
     `;
     if (src !== "load") {
         $("#just-found").after(displayText);
+        $("#just-found").show();
     } else {
         $("#just-found").before(displayText);
     }
-    eval(`if (${name}.rarity > 1) {$("#display-${name}").addClass("common")}`)
-    eval(`if (${name}.rarity * totalLuck > 48) {$("#display-${name}").addClass("uncommon")}`)
-    eval(`if (${name}.rarity * totalLuck > 298) {$("#display-${name}").addClass("rare")}`)
-    eval(`if (${name}.rarity * totalLuck > 998) {$("#display-${name}").addClass("epic")}`)
-    eval(`if (${name}.rarity * totalLuck > 9998) {$("#display-${name}").addClass("unseen")}`)
-    eval(`if (${name}.properties["event"]) {$("#${name}-counter").addClass("event-text")}`)
+    if (oreDict[name].rarity * totalLuck > 1) { $(`#display-${name}`).addClass("common")} 
+    if (oreDict[name].rarity * totalLuck >= 49) { $(`#display-${name}`).addClass("uncommon")}
+    if (oreDict[name].rarity * totalLuck >= 299) { $(`#display-${name}`).addClass("rare")}
+    if (oreDict[name].rarity * totalLuck >= 999) { $(`#display-${name}`).addClass("epic")}
+    if (oreDict[name].rarity * totalLuck >= 9999) { $(`#display-${name}`).addClass("unseen")}
+    if (oreDict[name].event) { $(`#${name}-counter`).addClass("event-text")}
+
 }
 
 function createAllDisplays() {
     for (i of sortedOreNames) {
-        eval(`if (${i}Amt >= 1) {createDisplay(i, "load")}`);
+        if (oreDict[i].amt > 1) {
+            createDisplay(i, "load")
+        }
     }
     $("#display-voidElement").remove();
 }
@@ -156,6 +168,18 @@ function click(event) {
     }
 }
 
+function toggleSidebar() {
+    if (sidebarOpen) {
+        $("aside").hide()
+        $("main").css("margin-right", "0")
+        sidebarOpen = false
+    } else {
+        $("aside").show()
+        $("main").css("margin-right", "22vw")
+        sidebarOpen = true
+    }
+}
+
 // misc functions
 
 function getTime() {
@@ -176,27 +200,27 @@ function changeFavicon() {
         }
         selectedOre = select(oreNames)
     }
-    document.querySelector("#favicon-link").setAttribute("href", `assets/${selectedOre}.png`)
+    document.querySelector("#favicon-link").setAttribute("href", `assets/ores/${selectedOre}.png`)
     lastFavicon = selectedOre
 }
 
 function getOreInfo(name) {
     let toDisplay = capitalizeFirstLetter(name)
-    let oreFound = allOres.find(x => x.name == name);
-    let toDisplayRarity = oreFound.rarity.toLocaleString("en-US")
+    let oreFound = oreDict[name]
+    let toDisplayRarity = oreFound.rarity
     if (oreFound.rarity <= 1) {
         toDisplayRarity = "Base"
     }
-
     if (oreFound.properties["display"]) {
         toDisplay = oreFound.properties["display"]
     }
-    return {"display": toDisplay, "rarity": toDisplayRarity, "desc": oreFound.desc}
+    return {"display": toDisplay, "rarity": toDisplayRarity, "desc": oreFound.desc, "time": oreFound.properties["time"]}
 }
 
 function showInfo(name) {
     let oreInfo = getOreInfo(name)
-    document.querySelector("#oreInfo").innerHTML = `Name: ${oreInfo.display}, Rarity: 1 in ${oreInfo.rarity}`
+    let time = oreInfo.time != "any" ? `, exclusive to ` + oreInfo.time : "";
+    document.querySelector("#oreInfo").innerHTML = `Name: ${oreInfo.display}, Rarity: 1 in ${oreInfo.rarity.toLocaleString("en-us")}` + time
     document.querySelector("#oreDesc").innerHTML = oreInfo.desc;
 }
 
@@ -206,13 +230,13 @@ function sortOreList() {
         if (a === "stone" || b === "stone" || a === "voidElement" || b === "voidElement") {
             return 0;
         }
-        if (eval(`${a}.rarity`) > eval(`${b}.rarity`)) {
+        if (oreDict[a].rarity > oreDict[b].rarity) {
             return 1;
         }
-        if (eval(`${a}.rarity`) < eval(`${b}.rarity`)) {
+        if (oreDict[a].rarity < oreDict[b].rarity) {
             return -1;
         }
-        if (eval(`${a}.rarity`) === eval(`${b}.rarity`)) {
+        if (oreDict[a].rarity === oreDict[b].rarity) {
             return 0;
         }
     })
@@ -226,7 +250,7 @@ function generateSave() {
     let ind = 0
     for (i of allOreNames) {
         ind += 1
-        currentAmt = eval(`${i}Amt * 7`)
+        currentAmt = oreDict[i].amt * 7
         string += `${currentAmt}`
         if (ind !== allOreNames.length) {
             string += "/"
@@ -247,16 +271,16 @@ function loadSave(code) {
         if (i % 7 !== 0) {
             window.location = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
         }
-        eval(`${currentOre}Amt = ${i / 7}`)
-        total += eval(`${currentOre}Amt`)
-        if (eval(`${currentOre}Amt`) > 0) {
+        oreDict[currentOre].amt = i / 7
+        total += oreDict[currentOre].amt
+        if (oreDict[currentOre].amt > 0) {
             if (currentOre != "voidElement") {
                 oreNames.push(currentOre)
             }
         }
         index += 1
     }
-    total -= voidElementAmt
+    total -= voidElement.amt
     $("#counter").html(total);
 }
 
@@ -280,7 +304,8 @@ class Ore {
         } else if (name == "stone") {
             ores = new Array(length).fill(this);
         }
-        eval(`window.${name}Amt = 0`)
+        this.amt = 0
+        oreDict[name] = this
         allOreNames.push(name)
         allOres.push(this)
     }
@@ -366,10 +391,13 @@ let chilledamethyst = new Ore("chilledamethyst", 3750, {time: "night", display: 
 let infernalgold = new Ore("infernalgold", 3750, {time: "day", display: "Infernal Gold"})
 let astralcrystal = new Ore("astralcrystal", 60000, {time: "night", display: "&#9789; Astral Crystal &#9790;"})
 let divinecrystal = new Ore("divinecrystal", 60000, {time: "day", display: "&#9788; Divine Crystal &#9788;"})
+// 2.1
+let tungsten = new Ore("tungsten", 144)
 
 // april fewls
 let thefunny = new Ore("thefunny", 300, {display: "THE FUNNIEST ORE IN ALL OF CRYSTAL COVES", event: aprilFoolsEvent})
 let mrbeastore = new Ore("mrbeastore", 2500, {event: aprilFoolsEvent})
+
 
 sortOreList();
 
@@ -388,6 +416,7 @@ if (document.cookie) {
 }
 
 createAllDisplays();
+getTime();
 
 setInterval(changeFavicon, 5000);
 setInterval(generateSave, 20000);
@@ -395,8 +424,14 @@ setInterval(getTime, 1000)
 setTimeout(clearMine, 200);
 
 
-window.onbeforeunload = function(){
-    generateSave();
-}
+window.onbeforeunload = generateSave
 
+$("#just-found").hide()
 $("#GAME").mousedown(click);
+
+$("html").keypress((e) => {
+    console.log(e.keyCode)
+    if (e.keyCode === 93) {
+        toggleSidebar()
+    }
+})

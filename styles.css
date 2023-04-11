@@ -1,7 +1,15 @@
-canvas {
+#GAME {
     background-image: url("assets/misc/background.png");
     background-repeat: repeat;
     border: 10px solid gray;
+}
+
+#effectOverlay {
+    border: 10px solid gray;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
 }
 
 body {
@@ -116,6 +124,10 @@ aside {
     border-color: rgb(255, 255, 0);
 }
 
+.ore-display-div.mythic {
+    border-color: #7dc8ff;
+}
+
 .ore-display-div.unseen {
     border-color: rgb(125, 0, 255);
 }
@@ -153,15 +165,23 @@ main {
     color: rgb(255, 255, 0)
 }
 
+.mythic-text {
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: white;
+    background: #7DC8FF;
+    background: linear-gradient(to top, #7DC8FF 0%, #7D98FF 100%);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+}
+
 .unseen-text {
-    color: rgb(125, 0, 255);
     -webkit-text-stroke-width: 2px;
     -webkit-text-stroke-color: white;
     background: #7D00FF;
     background: linear-gradient(to bottom, #7D00FF 0%, #AA00CC 100%);
     background-clip: text;
     -webkit-text-fill-color: transparent;
-
 }
 
 #events {

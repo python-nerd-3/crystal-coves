@@ -3,6 +3,7 @@ let descs = {
     "voidElement": "Wat",
     "copper": "A useful but common ore found all over the mine. Please don't ignore it, minerals have feelings too. (Designed by Samuel Green)",
     "coal": "Dead dino. The question is, what killed the dinos? Was it caused by global warming from the burning of fossil fuels? (Designed by Samuel Green)",
+    "quartz": "Quartz is a common yet useful mineral often found in tech. It has just a few variants like citrine, amethyst, tiger's eye, agate, smoky quartz, rose quartz, aventurine, jasper, onyx, blue quartz, ametrine, quartz, prasiolite, rutilated quartz, clear quartz, mtorolite, chalcedony, carnelian, milky quartz, onyx, jasper, carnelian, chrysoprase, heliotrope. This adds up to 3 in total.",
     "iron": "Iron was often considered to be uncommon, until people got common sense. Then they lost it again. The cycle of life. (Designed by Samuel Green)",
     "lead": "Lead is a slightly rarer material used in ancient pipes, but deadly poisonous. I would love my water to be poisoned! Fun! (Idea by anonymous, designed by Samuel Green)",
     "tungsten": "This Ore Cured My Morality: All the people here who bought this wireless tungsten Ore to admire its surreal heft have precisely the wrong mindset. I, in my exalted wisdom and unbridled ambition, bought this Ore to become fully accustomed to the intensity of its density, to make its weight bearable and in fact normal to me, so that all the world around me may fade into a fluffy arena of gravitational inconsequence. And it has worked, to profound success. I have carried the tungsten with me, have grown attached to the downward pull of its small form, its desire to be one with the floor. This force has become so normal to me that lifting any other object now feels like lifting cotton candy, or a fluffy pillow. Big burly manly men who pump iron now seem to me as little children who raise mere aluminum.",
@@ -27,7 +28,6 @@ let descs = {
     "crystalresonance": "The Crystal of Resonance. Cool &#128077;",
     "astralcrystal": "The Astral Crystal gets a placeholder description. (Idea and design by Samuel Green)",
     "divinecrystal": "The Divine Crystal is one of the rarest ores ever discovered. It is known for its (literally) blinding lights from the power of the sun. Rumor has it that the only thing brighter than it is Discord light mode. The beams from the side of the core provides all of this energy. (Idea and design by Samuel Green)",
-
     "thefunny": "HEHEHEHEHEHEHE",
     "mrbeastore": "rumor hase it this ore gives you 1000000000000 gold and 999 iron"
 }

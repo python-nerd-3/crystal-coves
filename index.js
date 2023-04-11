@@ -1,7 +1,7 @@
 let canvas = $("#GAME")[0]
 let ctx = canvas.getContext("2d")
-let length = 120000
-let ores = ["HEY SOMETING BRONK"]
+let fxCanvas = $("#effectOverlay")[0]
+let fxCtx = fxCanvas.getContext("2d")
 let moves = []
 let oreNames = ["stone"]
 let allOreNames = []
@@ -11,6 +11,7 @@ let total = 0
 let totalLuck = 1
 let oreDict = {}
 let sidebarOpen = true
+let totalPercent = 100
 let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 if (isSafari) {
     alert("WARNING: This game is very glitchy on mobile.")
@@ -26,6 +27,7 @@ let music = new Audio("assets/sfx/music.mp3");
 let breakSFX = new Audio("assets/sfx/break.mp3");
 let rarespawnSFX = new Audio("assets/sfx/rarespawn.mp3")
 let unseenSFX = new Audio("assets/sfx/unseen.mp3")
+let depositSFX = new Audio("assets/sfx/deposit.mp3")
 breakSFX.volume = 0.08;
 rarespawnSFX.volume = 1;
 music.loop = true;
@@ -49,7 +51,7 @@ function playsfx() {
     }
 }
 
-Audio.prototype.playsfx = playsfx // appending to prototype normal dont work for some reason
+Audio.prototype.playsfx = playsfx // Dingle
 
 // ore manipulation & generation
 
@@ -60,7 +62,8 @@ function generateOre(x, y) {
         cont = false;
     }
     if (cont) {
-        let randomOre = select(ores)
+        let percent = Math.random() * 100
+        let randomOre = Object.values(oreDict).find(i => i.percentChunk[0] >= percent && i.percentChunk[1] <= percent)
         let date = new Date()
         if (randomOre.properties["time"] == "day" && ~~(date.getMinutes() / 10) % 2 == 1) {
             randomOre = stone;
@@ -68,19 +71,25 @@ function generateOre(x, y) {
         if (randomOre.properties["time"] == "night" && ~~(date.getMinutes() / 10) % 2 == 0) {
             randomOre = stone;
         }
-        genOres.push(new OreDisplay(randomOre, x, y));
-        if (randomOre.rarity * totalLuck >= 999) {
+        let generatedOre = new OreDisplay(randomOre, x, y)
+        genOres.push(generatedOre);
+        if (generatedOre.deposit) {
+            depositSFX.playsfx();
+        }
+        if (randomOre.trueRarity >= 1000) {
             let oreInfo = getOreInfo(randomOre.name)
             $("#alert").html(`RARE ORE: ${oreInfo.display} has spawned! (1/${oreInfo.rarity.toLocaleString("en-us")})`)
-            if (oreInfo.rarity * totalLuck >= 9999) {
+            if (oreInfo.rarity >= 25000) {
                 $("#alert").addClass("unseen-text")
                 $("#alert").removeClass("epic-text")
                 unseenSFX.playsfx();
             } else {
-                console.log(oreInfo.rarity)
                 $("#alert").addClass("epic-text")
                 $("#alert").removeClass("unseen-text")
                 rarespawnSFX.playsfx();
+            }   
+            if (oreInfo.rarity >= 8000 && oreInfo.rarity <= 25000) {
+                $("#alert").addClass("mythic-text")
             }
             setTimeout(() => {
                 $("#alert").html("")
@@ -109,6 +118,17 @@ function addOre(type, amt) {
     $(`#${type}-counter`).html(oreDict[type].amt)
 }
 
+function renderFx() {
+    fxCtx.clearRect(0, 0, 1600, 900)
+    for (i of genOres.filter(x => x.deposit)) {
+        fxCtx.beginPath();
+        fxCtx.strokeStyle = "white";
+        fxCtx.lineWidth = 3;
+        fxCtx.strokeRect(i.x, i.y, 25, 25);
+        fxCtx.lineWidth = 1;
+    }
+}
+
 // sidebar
 
 function createDisplay(name, src="") {
@@ -126,13 +146,13 @@ function createDisplay(name, src="") {
     } else {
         $("#just-found").before(displayText);
     }
-    if (oreDict[name].rarity * totalLuck > 1) { $(`#display-${name}`).addClass("common")} 
-    if (oreDict[name].rarity * totalLuck >= 49) { $(`#display-${name}`).addClass("uncommon")}
-    if (oreDict[name].rarity * totalLuck >= 299) { $(`#display-${name}`).addClass("rare")}
-    if (oreDict[name].rarity * totalLuck >= 999) { $(`#display-${name}`).addClass("epic")}
-    if (oreDict[name].rarity * totalLuck >= 9999) { $(`#display-${name}`).addClass("unseen")}
+    if (oreDict[name].trueRarity > 1) { $(`#display-${name}`).addClass("common")} 
+    if (oreDict[name].trueRarity >= 50) { $(`#display-${name}`).addClass("uncommon")}
+    if (oreDict[name].trueRarity >= 300) { $(`#display-${name}`).addClass("rare")}
+    if (oreDict[name].trueRarity >= 1000) { $(`#display-${name}`).addClass("epic")}
+    if (oreDict[name].trueRarity >= 8000) { $(`#display-${name}`).addClass("mythic")}
+    if (oreDict[name].trueRarity >= 25000) { $(`#display-${name}`).addClass("unseen")}
     if (oreDict[name].event) { $(`#${name}-counter`).addClass("event-text")}
-
 }
 
 function createAllDisplays() {
@@ -164,7 +184,7 @@ function click(event) {
         generateOre(targetBlock.x, targetBlock.y + 25)
         generateOre(targetBlock.x - 25, targetBlock.y)
         generateOre(targetBlock.x + 25, targetBlock.y)
-        addOre(targetBlock.type, 1)
+        addOre(targetBlock.type, foundOre.deposit ? select([5, 6, 7]) : 1)
     }
 }
 
@@ -207,7 +227,7 @@ function changeFavicon() {
 function getOreInfo(name) {
     let toDisplay = capitalizeFirstLetter(name)
     let oreFound = oreDict[name]
-    let toDisplayRarity = oreFound.rarity
+    let toDisplayRarity = oreFound.trueRarity
     if (oreFound.rarity <= 1) {
         toDisplayRarity = "Base"
     }
@@ -290,6 +310,7 @@ class Ore {
     constructor(name, rarity, properties = {obtainable: true}) {
         this.name = name;
         this.texture = document.querySelector(`#tx-${name}`);
+        this.trueRarity = rarity
         this.rarity = ~~(rarity / totalLuck);
         this.properties = {display: "", obtainable: true, event: false, time: "any"}
         for (let i in properties) {
@@ -299,23 +320,17 @@ class Ore {
             this.properties["obtainable"] = false;
         }
         this.desc = descs[name];
-        if (name != "stone" && name != "voidElement" && this.properties["obtainable"]) {
-            this.append();
-        } else if (name == "stone") {
-            ores = new Array(length).fill(this);
-        }
         this.amt = 0
         oreDict[name] = this
         allOreNames.push(name)
         allOres.push(this)
-    }
-
-    append() {
-        let amt = length / this.rarity
-        let index = length - amt
-        length -= amt
-        let items = new Array(~~(amt)).fill(this)
-        ores.splice(index, amt, ...items)
+        this.percent = 100 / rarity
+        this.percentChunk = [totalPercent, totalPercent - this.percent]
+        if (this.rarity > 1 && this.properties["obtainable"]) {
+            totalPercent -= this.percent
+        } else {
+            this.percentChunk = [0, 0]
+        }
     }
 }
 
@@ -326,6 +341,7 @@ class OreDisplay {
         this.rarity = parent.rarity;
         this.x = x;
         this.y = y;
+        this.deposit = Boolean(Math.random() * 15 > 14 && this.rarity > 1)
         ctx.beginPath();
         ctx.drawImage(this.texture, x, y, 25, 25);
     }
@@ -370,34 +386,37 @@ let diamond = new Ore("diamond", 1000);
 let painite = new Ore("painite", 1500);
 let vyvyxyn = new Ore("vyvyxyn", 3000);
 // ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
-let crystalresonance = new Ore("crystalresonance", 24000, {display: "Crystal of Resonance"})
+let crystalresonance = new Ore("crystalresonance", 25000, {display: "Crystal of Resonance"})
 let crysor = new Ore("crysor", 5000)
 // Release
 let amethyst = new Ore("amethyst", 175)
 // 1.1
 let fossil = new Ore("fossil", 900)
-let porvileon = new Ore("porvileon", 12000)
+let porvileon = new Ore("porvileon", 12500)
 // 1.2
 let xyxyvylyn = new Ore("xyxyvylyn", 3000)
 // 1.2.1
 let patricine = new Ore("patricine", 3000, {event: stPatricksEvent})
 // 1.3
 let cobalt = new Ore("cobalt", 4000, {display: "Cobalt-60"})
-let mysalin = new Ore("mysalin", 15000)
+let mysalin = new Ore("mysalin", 15723)
 // 2.0
 let basalt = new Ore("basalt", 200, {time: "night"})
 let magma = new Ore("magma", 200, {time: "day"})
-let chilledamethyst = new Ore("chilledamethyst", 3750, {time: "night", display: "Chilled Amethyst"})
-let infernalgold = new Ore("infernalgold", 3750, {time: "day", display: "Infernal Gold"})
+let chilledamethyst = new Ore("chilledamethyst", 3800, {time: "night", display: "Chilled Amethyst"})
+let infernalgold = new Ore("infernalgold", 3800, {time: "day", display: "Infernal Gold"})
 let astralcrystal = new Ore("astralcrystal", 60000, {time: "night", display: "&#9789; Astral Crystal &#9790;"})
 let divinecrystal = new Ore("divinecrystal", 60000, {time: "day", display: "&#9788; Divine Crystal &#9788;"})
-// 2.1
-let tungsten = new Ore("tungsten", 144)
-
-// april fewls
+// 9.9.9
 let thefunny = new Ore("thefunny", 300, {display: "THE FUNNIEST ORE IN ALL OF CRYSTAL COVES", event: aprilFoolsEvent})
 let mrbeastore = new Ore("mrbeastore", 2500, {event: aprilFoolsEvent})
+// 2.1
+let tungsten = new Ore("tungsten", 144)
+// 2.2
+let quartz = new Ore("quartz", 30)
 
+
+stone.percentChunk = [totalPercent, 0]
 
 sortOreList();
 
@@ -419,9 +438,10 @@ createAllDisplays();
 getTime();
 
 setInterval(changeFavicon, 5000);
-setInterval(generateSave, 20000);
-setInterval(getTime, 1000)
+setInterval(generateSave, 10000);
+setInterval(getTime, 1000);
 setTimeout(clearMine, 200);
+setInterval(renderFx, 16)
 
 
 window.onbeforeunload = generateSave

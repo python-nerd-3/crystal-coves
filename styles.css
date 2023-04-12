@@ -172,7 +172,7 @@ main {
     background: linear-gradient(to top, #7DC8FF 0%, #7D98FF 100%);
     background-clip: text;
     -webkit-text-fill-color: transparent;
-
+    font-size: 40px;
 }
 
 .unseen-text {
@@ -182,6 +182,7 @@ main {
     background: linear-gradient(to bottom, #7D00FF 0%, #AA00CC 100%);
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-size: 40px;
 }
 
 #events {

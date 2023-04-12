@@ -82,13 +82,16 @@ function generateOre(x, y) {
             if (oreInfo.rarity >= 25000) {
                 $("#alert").addClass("unseen-text")
                 $("#alert").removeClass("epic-text")
+                $("#alert").removeClass("mythic-text")
                 unseenSFX.playsfx();
             } else {
                 $("#alert").addClass("epic-text")
                 $("#alert").removeClass("unseen-text")
+                $("#alert").removeClass("mythic-text")
                 rarespawnSFX.playsfx();
             }   
             if (oreInfo.rarity >= 8000 && oreInfo.rarity <= 25000) {
+                $("#alert").removeClass("epic-text")
                 $("#alert").addClass("mythic-text")
             }
             setTimeout(() => {

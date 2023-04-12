@@ -157,7 +157,7 @@ function createDisplay(name, src="") {
 
 function createAllDisplays() {
     for (i of sortedOreNames) {
-        if (oreDict[i].amt > 1) {
+        if (oreDict[i].amt >= 1) {
             createDisplay(i, "load")
         }
     }

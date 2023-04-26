@@ -6,12 +6,15 @@ let moves = []
 let oreNames = ["stone"]
 let allOreNames = []
 let allOres = []
+let particles = []
+let deadParticles = []
 let lastFavicon = "stone"
 let total = 0
 let totalLuck = 1
 let oreDict = {}
 let sidebarOpen = true
 let totalPercent = 100
+let ticks = 0
 let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 if (isSafari) {
     alert("WARNING: This game is very glitchy on mobile.")
@@ -26,6 +29,7 @@ if (isSafari) {
 let music = new Audio("assets/sfx/music.mp3");
 let breakSFX = new Audio("assets/sfx/break.mp3");
 let rarespawnSFX = new Audio("assets/sfx/rarespawn.mp3")
+let mythicspawnSFX = new Audio("assets/sfx/mythicspawn.mp3")
 let unseenSFX = new Audio("assets/sfx/unseen.mp3")
 let depositSFX = new Audio("assets/sfx/deposit.mp3")
 breakSFX.volume = 0.08;
@@ -79,14 +83,18 @@ function generateOre(x, y) {
         if (randomOre.trueRarity >= 1000) {
             let oreInfo = getOreInfo(randomOre.name)
             $("#alert").html(`RARE ORE: ${oreInfo.display} has spawned! (1/${oreInfo.rarity.toLocaleString("en-us")})`)
-            if (oreInfo.rarity >= 25000) {
+            if (oreInfo.rarity >= 20000) {
                 $("#alert").addClass("unseen-text")
                 unseenSFX.playsfx();
+            } else if (oreInfo.rarity >= 8000 && oreInfo.rarity <= 20000) {
+                $("#alert").removeClass("unseen-text")
+                $("#alert").addClass("mythic-text")
+                mythicspawnSFX.playsfx();
             } else {
                 $("#alert").removeClass("unseen-text mythic-text")
                 $("#alert").addClass("epic-text")
                 rarespawnSFX.playsfx();
-            }   
+            }
             if (oreInfo.rarity >= 8000 && oreInfo.rarity <= 25000) {
                 $("#alert").removeClass("unseen-text")
                 $("#alert").addClass("mythic-text")
@@ -119,7 +127,9 @@ function addOre(type, amt) {
 }
 
 function renderFx() {
+    deadParticles = []
     fxCtx.clearRect(0, 0, 1600, 900)
+    ticks += 1
     for (i of genOres.filter(x => x.deposit)) {
         fxCtx.beginPath();
         fxCtx.strokeStyle = "white";
@@ -127,6 +137,20 @@ function renderFx() {
         fxCtx.strokeRect(i.x, i.y, 25, 25);
         fxCtx.lineWidth = 1;
     }
+    for (i of particles) {
+        i.refresh()
+    }
+    for (i of genOres.filter(x => x.particles.show)) {
+        if ((ticks + i.creationTime) % i.particles.intensity == 0) {
+            particles.push(new Particle(i))
+        }
+    }
+    particles = particles.filter(function(x) {
+        return deadParticles.indexOf(x) < 0;
+      });
+    setTimeout(() =>{
+        window.requestAnimationFrame(renderFx)
+    }, 8)
 }
 
 // sidebar
@@ -151,7 +175,7 @@ function createDisplay(name, src="") {
     if (oreDict[name].trueRarity >= 300) { $(`#display-${name}`).addClass("rare")}
     if (oreDict[name].trueRarity >= 1000) { $(`#display-${name}`).addClass("epic")}
     if (oreDict[name].trueRarity >= 8000) { $(`#display-${name}`).addClass("mythic")}
-    if (oreDict[name].trueRarity >= 25000) { $(`#display-${name}`).addClass("unseen")}
+    if (oreDict[name].trueRarity >= 20000) { $(`#display-${name}`).addClass("unseen")}
     if (oreDict[name].event) { $(`#${name}-counter`).addClass("event-text")}
 }
 
@@ -312,7 +336,7 @@ class Ore {
         this.texture = document.querySelector(`#tx-${name}`);
         this.trueRarity = rarity
         this.rarity = ~~(rarity / totalLuck);
-        this.properties = {display: "", obtainable: true, event: false, time: "any"}
+        this.properties = {display: "", obtainable: true, event: false, time: "any", particles: {show: false, type: "sparkle", intensity: 1}}
         for (let i in properties) {
             this.properties[i] = properties[i]
         } // this is like my first time using an in loop
@@ -342,6 +366,11 @@ class OreDisplay {
         this.x = x;
         this.y = y;
         this.deposit = Boolean(Math.random() * 15 > 14 && this.rarity > 1)
+        this.particles = parent.properties["particles"]
+        if (this.particles.show) {
+            particles.push(new Particle(this))
+        }
+        this.creationTime = performance.now()
         ctx.beginPath();
         ctx.drawImage(this.texture, x, y, 25, 25);
     }
@@ -356,6 +385,31 @@ class GameEvent {
         if (Date.now() < expire) {
             $("#events").append(string)
             totalLuck += luck - 1
+        }
+    }
+}
+
+class Particle {
+    constructor(parent) {
+        this.parent = parent
+        this.type = parent.particles.type
+        this.tx = $(`#tx-par-${this.type}`)[0]
+        this.loc = [parent.x + 8.5, parent.y + 8.5]
+        this.dir = Math.random() * 360
+        this.loc[0] += Math.sin(this.dir) * 8
+        this.loc[1] += Math.cos(this.dir) * 8
+        this.life = 0
+    }
+
+    refresh() {
+        this.life += 1
+        fxCtx.beginPath()
+        fxCtx.drawImage(this.tx, this.loc[0], this.loc[1], 8, 8) 
+        this.loc[0] += Math.sin(this.dir) / 2
+        this.loc[1] += Math.cos(this.dir) / 2
+        if (!genOres.includes(this.parent) || this.life > 90) { // checks if particle is fatherless
+            fxCtx.clearRect(this.loc[0], this.loc[1], 8, 8)
+            deadParticles.push(this)
         }
     }
 }
@@ -379,20 +433,20 @@ let copper = new Ore("copper", 15);
 let coal = new Ore("coal", 25);
 let iron = new Ore("iron", 40)
 let lead = new Ore("lead", 65);
-let gold = new Ore("gold", 300);
+let gold = new Ore("gold", 300, {particles: {show: true, type: "sparkle", intensity: 30}});
 let relic = new Ore("relic", 500, {display: "Bronze Relic"});
-let emerald = new Ore("emerald", 750);
-let diamond = new Ore("diamond", 1000);
+let emerald = new Ore("emerald", 750, {particles: {show: true, type: "sparkle", intensity: 25}});
+let diamond = new Ore("diamond", 1000, {particles: {show: true, type: "sparkle", intensity: 20}});
 let painite = new Ore("painite", 1500);
-let vyvyxyn = new Ore("vyvyxyn", 3000);
+let vyvyxyn = new Ore("vyvyxyn", 3000, {particles: {show: true, type: "sparkle", intensity: 5}});
 // ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
 let crystalresonance = new Ore("crystalresonance", 25000, {display: "Crystal of Resonance"})
-let crysor = new Ore("crysor", 5000)
+let crysor = new Ore("crysor", 5000, {particles: {show: true, type: "snowflake", intensity: 15}})
 // Release
-let amethyst = new Ore("amethyst", 175)
+let amethyst = new Ore("amethyst", 175, {particles: {show: true, type: "sparkle", intensity: 60}})
 // 1.1
 let fossil = new Ore("fossil", 900)
-let porvileon = new Ore("porvileon", 12500)
+let porvileon = new Ore("porvileon", 12500, {show: true, type: "oddsparkle", intensity: 27})
 // 1.2
 let xyxyvylyn = new Ore("xyxyvylyn", 3000)
 // 1.2.1
@@ -402,11 +456,11 @@ let cobalt = new Ore("cobalt", 4000, {display: "Cobalt-60"})
 let mysalin = new Ore("mysalin", 15723)
 // 2.0
 let basalt = new Ore("basalt", 200, {time: "night"})
-let magma = new Ore("magma", 200, {time: "day"})
-let chilledamethyst = new Ore("chilledamethyst", 3800, {time: "night", display: "Chilled Amethyst"})
-let infernalgold = new Ore("infernalgold", 3800, {time: "day", display: "Infernal Gold"})
-let astralcrystal = new Ore("astralcrystal", 60000, {time: "night", display: "&#9789; Astral Crystal &#9790;"})
-let divinecrystal = new Ore("divinecrystal", 60000, {time: "day", display: "&#9788; Divine Crystal &#9788;"})
+let magma = new Ore("magma", 200, {time: "day", particles: {show: true, type: "fire", intensity: 45}})
+let chilledamethyst = new Ore("chilledamethyst", 3800, {time: "night", display: "Chilled Amethyst", particles: {show: true, type: "snowflake", intensity: 20}})
+let infernalgold = new Ore("infernalgold", 3800, {time: "day", display: "Infernal Gold", particles: {show: true, type: "fire", intensity: 20}})
+let astralcrystal = new Ore("astralcrystal", 60000, {time: "night", display: "&#9789; Astral Crystal &#9790;", particles: {show: true, type: "snowflake", intensity: 5}})
+let divinecrystal = new Ore("divinecrystal", 60000, {time: "day", display: "&#9788; Divine Crystal &#9788;", particles: {show: true, type: "fire", intensity: 5}})
 // 9.9.9
 let thefunny = new Ore("thefunny", 300, {display: "THE FUNNIEST ORE IN ALL OF CRYSTAL COVES", event: aprilFoolsEvent})
 let mrbeastore = new Ore("mrbeastore", 2500, {event: aprilFoolsEvent})
@@ -414,7 +468,11 @@ let mrbeastore = new Ore("mrbeastore", 2500, {event: aprilFoolsEvent})
 let tungsten = new Ore("tungsten", 144)
 // 2.2
 let quartz = new Ore("quartz", 30)
-
+// 2.3
+let vulkani = new Ore("vulkani", 25000, {time: "day", display: "Vulkanï", particles: {show: true, type: "fire", intensity: 1}})
+let pyrite = new Ore("pyrite", 75)
+let platnium = new Ore("platnium", 1000, {particles: {show: true, type: "sparkle", intensity: 20}})
+let foliatite = new Ore("foliatite", 4916)
 
 stone.percentChunk = [totalPercent, 0]
 
@@ -441,8 +499,7 @@ setInterval(changeFavicon, 5000);
 setInterval(generateSave, 10000);
 setInterval(getTime, 1000);
 setTimeout(clearMine, 200);
-setInterval(renderFx, 16)
-
+window.requestAnimationFrame(renderFx)
 
 window.onbeforeunload = generateSave
 

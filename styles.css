@@ -12,6 +12,10 @@
     pointer-events: none;
 }
 
+img {
+    image-rendering: pixelated;    
+}
+
 body {
     background-color: black;
     color: white;

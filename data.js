@@ -29,5 +29,12 @@ let descs = {
     "astralcrystal": "The Astral Crystal gets a placeholder description. (Idea and design by Samuel Green)",
     "divinecrystal": "The Divine Crystal is one of the rarest ores ever discovered. It is known for its (literally) blinding lights from the power of the sun. Rumor has it that the only thing brighter than it is Discord light mode. The beams from the side of the core provides all of this energy. (Idea and design by Samuel Green)",
     "thefunny": "HEHEHEHEHEHEHE",
-    "mrbeastore": "rumor hase it this ore gives you 1000000000000 gold and 999 iron"
+    "mrbeastore": "rumor hase it this ore gives you 1000000000000 gold and 999 iron",
+    "vulkani": "Vulkanï is an ore that forms after a massive volcano eruption. The fire is so intense that despite being beautiful it is never cut. Arson :D",
+    "pyrite": "Pyrite is called fool's gold because it looks like gold. But that's not true, it's called fool's gold because I commited some mild tomfoolery on 75% of all gold blocks in this mine which made them into pyrite (true story) (Idea by Samuel Green)",
+    "platnium": "Platnium is often proccessed into bars for rappers to use during a battle. In a rap battle, whoever brings more bars wins the battle. This is not bribery in ANY shape or form.",
+    "foliatite": "plamceholdar (if you get the chance good job) (Designed by Samuel Green)"
 }
+
+// i once leaked an ore here
+// i surely wont do that again right?

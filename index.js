@@ -151,7 +151,7 @@ function renderFx() {
     }
     particles = particles.filter(function(x) {
         return deadParticles.indexOf(x) < 0
-      })
+    })
     setTimeout(() =>{
         window.requestAnimationFrame(renderFx)
     }, 8)
@@ -174,13 +174,14 @@ function createDisplay(name, src="") {
     } else {
         $("#just-found").before(displayText)
     }
+    console.log(oreDict[name].event)
     if (oreDict[name].trueRarity > 1) { $(`#display-${name}`).addClass("common")} 
     if (oreDict[name].trueRarity >= 50) { $(`#display-${name}`).addClass("uncommon")}
     if (oreDict[name].trueRarity >= 300) { $(`#display-${name}`).addClass("rare")}
     if (oreDict[name].trueRarity >= 1000) { $(`#display-${name}`).addClass("epic")}
     if (oreDict[name].trueRarity >= 8000) { $(`#display-${name}`).addClass("mythic")}
     if (oreDict[name].trueRarity >= 20000) { $(`#display-${name}`).addClass("unseen")}
-    if (oreDict[name].event) { $(`#${name}-counter`).addClass("event-text")}
+    if (oreDict[name].properties.event) { $(`#${name}-counter`).addClass("event-text")}
 }
 
 function createAllDisplays() {

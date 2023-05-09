@@ -1,11 +1,17 @@
+* {
+    --bg-color: #112;
+    --sidebar-color: #113;
+    --accent-color: #7f7f8f;
+}
+
 #GAME {
     background-image: url("assets/misc/background.png");
     background-repeat: repeat;
-    border: 10px solid gray;
+    border: 10px solid var(--accent-color);
 }
 
 #effectOverlay {
-    border: 10px solid gray;
+    border: 10px solid var(--accent-color);
     position: absolute;
     top: 0;
     left: 0;
@@ -17,10 +23,11 @@ img {
 }
 
 body {
-    background-color: black;
+    background-color: var(--bg-color);
     color: white;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     margin: 0;
+    margin-bottom: 30px;
 }
 
 button, #oreInfo {
@@ -64,8 +71,8 @@ aside {
     z-index: 1; 
     top: 0; 
     right: 0;
-    background-color: #111; 
-    border-left: #7f7f7f solid 10px;
+    background-color: var(--sidebar-color); 
+    border-left: var(--accent-color) solid 10px;
     padding-top: 20px;
     bottom: 0;
     overflow: scroll;
@@ -88,11 +95,11 @@ aside {
 .ore-display-div {
     margin-left: 1vw;
     display: flex;
-    border: 1vw solid gray;
+    border: 1vw solid #7f7f7f;
     border-radius: 2vw;
     width: 20vw;
     position: relative;
-    background-color: #000;
+    background-color: var(--bg-color);
     margin-bottom: 1vw;
 }
 
@@ -143,10 +150,11 @@ main {
 
 #oreInfoContainer {
     margin-top: 50px;
-    border: 15px solid gray;
+    border: 15px solid var(--accent-color);
     border-radius: 50px;
     padding: 10px;
     width: 1600px;
+    background-color: #001;
 }
 
 #counter {
@@ -162,7 +170,7 @@ main {
     animation-name: rotate;
     animation-duration: 1s;
     animation-iteration-count: infinite;
-    background-color: black;
+    background-color: var(--bg-color);
 }
 
 .epic-text {

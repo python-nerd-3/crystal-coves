@@ -1,7 +1,8 @@
-* {
+body {
     --bg-color: #112;
     --sidebar-color: #113;
     --accent-color: #7f7f8f;
+    --text-color: #fff;
 }
 
 #GAME {
@@ -24,7 +25,7 @@ img {
 
 body {
     background-color: var(--bg-color);
-    color: white;
+    color: var(--text-color);
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     margin: 0;
     margin-bottom: 30px;
@@ -154,7 +155,7 @@ main {
     border-radius: 50px;
     padding: 10px;
     width: 1600px;
-    background-color: #001;
+    background-color: var(--sidebar-color);
 }
 
 #counter {
@@ -255,6 +256,10 @@ body#side-page {
     top: 110px;
 }
 
+#volume-btn {
+    top: 160px;
+}
+
 #time {
     position: absolute;
     left: 1540px;
@@ -265,4 +270,28 @@ body#side-page {
     font-size: 1.8vw;
     margin-left: 10px;
     margin-bottom: 40px;
+}
+
+#theme-select-dropdown {
+    border: 5px var(--accent-color) solid;
+    border-radius: 20px;
+    margin: 20px 20px 20px 20px;
+    font-size: 20px;
+    padding: 4px;
+}
+
+#slider-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    background-color: var(--sidebar-color);
+    color: var(--text-color);
+    border: 5px solid var(--accent-color);
+    border-radius: 20px;
+}
+
+input[type="range"] {
+    accent-color: var(--accent-color);
 }

@@ -8,6 +8,7 @@ let allOreNames = []
 let allOres = []
 let particles = []
 let deadParticles = []
+let genOres = []
 let lastFavicon = "stone"
 let total = 0
 let totalLuck = 1
@@ -15,6 +16,7 @@ let oreDict = {}
 let sidebarOpen = true
 let totalPercent = 100
 let ticks = 0
+let currentTime = null
 let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 if (isSafari) {
     alert("WARNING: This game is very glitchy on mobile.")
@@ -33,7 +35,7 @@ let mythicspawnSFX = new Audio("assets/sfx/mythicspawn.mp3")
 let unseenSFX = new Audio("assets/sfx/unseen.mp3")
 let depositSFX = new Audio("assets/sfx/deposit.mp3")
 breakSFX.volume = 0.08
-rarespawnSFX.volume = 1
+unseenSFX.volume = 1
 music.loop = true
 
 // QoL functions
@@ -174,7 +176,6 @@ function createDisplay(name, src="") {
     } else {
         $("#just-found").before(displayText)
     }
-    console.log(oreDict[name].event)
     if (oreDict[name].trueRarity > 1) { $(`#display-${name}`).addClass("common")} 
     if (oreDict[name].trueRarity >= 50) { $(`#display-${name}`).addClass("uncommon")}
     if (oreDict[name].trueRarity >= 300) { $(`#display-${name}`).addClass("rare")}
@@ -199,21 +200,19 @@ function click(event) {
     if (music.paused) {
         music.play()
     }
-    let targetBlock = null
     let foundOre = genOres.find((z) => (event.pageX >= z.x + 10 && event.pageX <= z.x + 35 && event.pageY >= z.y + 10 && event.pageY <= z.y + 35)) 
     if (foundOre) {
         if (foundOre.type !== "voidElement") {
             breakSFX.playsfx()
         }
         genOres.splice(genOres.indexOf(foundOre), 1)
-        targetBlock = foundOre
-        ctx.clearRect(targetBlock.x, targetBlock.y, 25, 25)
-        genOres.push(new OreDisplay(voidElement, targetBlock.x, targetBlock.y))
-        generateOre(targetBlock.x, targetBlock.y - 25)
-        generateOre(targetBlock.x, targetBlock.y + 25)
-        generateOre(targetBlock.x - 25, targetBlock.y)
-        generateOre(targetBlock.x + 25, targetBlock.y)
-        addOre(targetBlock.type, foundOre.deposit ? select([5, 6, 7]) : 1)
+        ctx.clearRect(foundOre.x, foundOre.y, 25, 25)
+        genOres.push(new OreDisplay(voidElement, foundOre.x, foundOre.y))
+        generateOre(foundOre.x, foundOre.y - 25)
+        generateOre(foundOre.x, foundOre.y + 25)
+        generateOre(foundOre.x - 25, foundOre.y)
+        generateOre(foundOre.x + 25, foundOre.y)
+        addOre(foundOre.type, foundOre.deposit ? select([5, 6, 7]) : 1)
     }
 }
 
@@ -229,14 +228,65 @@ function toggleSidebar() {
     }
 }
 
+function changeTheme() {
+    let bodyStyle = $("body")[0].style
+    switch ($("#theme-select-dropdown").val()) {
+        case "navy":
+            bodyStyle.setProperty("--bg-color", "#112")
+            bodyStyle.setProperty("--sidebar-color", "#113")
+            bodyStyle.setProperty("--accent-color", "#7f7f8f")
+            bodyStyle.setProperty("--text-color", "#fff")
+            break
+        case "black":
+            bodyStyle.setProperty("--bg-color", "#000")
+            bodyStyle.setProperty("--sidebar-color", "#111")
+            bodyStyle.setProperty("--accent-color", "#7f7f7f")
+            bodyStyle.setProperty("--text-color", "#fff")
+            break
+        case "amethyst":
+            bodyStyle.setProperty("--bg-color", "#203")
+            bodyStyle.setProperty("--sidebar-color", "#304")
+            bodyStyle.setProperty("--accent-color", "#96c")
+            bodyStyle.setProperty("--text-color", "#fff")
+            break
+        case "hacker":
+            bodyStyle.setProperty("--bg-color", "#000")
+            bodyStyle.setProperty("--sidebar-color", "#111")
+            bodyStyle.setProperty("--accent-color", "#0f0")
+            bodyStyle.setProperty("--text-color", "#0f0")
+            break
+        case "pain":
+            bodyStyle.setProperty("--bg-color", "#fff")
+            bodyStyle.setProperty("--sidebar-color", "#fff")
+            bodyStyle.setProperty("--accent-color", "#fff")
+            bodyStyle.setProperty("--text-color", "#000")
+            break
+    }
+    generateSave()
+}
+
+function changeVolume() {
+    let musicVol = ($("#music-slider").val() > 0 ? $("#music-slider").val() : 0.000001) / 100
+    let sfxVol = $("#sfx-slider").val() / 100
+    let raresfxVol = $("#rarespawn-sfx-slider").val() / 100
+    music.volume = musicVol
+    breakSFX.volume = sfxVol * 0.08
+    depositSFX.VOLUME = sfxVol
+    rarespawnSFX.volume = raresfxVol
+    mythicspawnSFX.volume = raresfxVol
+    unseenSFX.volime = raresfxVol * 1.5
+}
+
 // misc functions
 
 function getTime() {
     let date = new Date()
-    if (~~(date.getMinutes() / 10) % 2 == 0) {
+    if (~~(date.getMinutes() / 10) % 2 == 0 && currentTime != "day") {
         $("#time").attr("src", "assets/misc/sun.png")
-    } else {
+        currentTime = "day"
+    } else if (~~(date.getMinutes() / 10) % 2 == 1 && currentTime != "night") {
         $("#time").attr("src", "assets/misc/moon.png")
+        currentTime = "night"
     }
 }
 
@@ -295,7 +345,12 @@ function sortOreList() {
 
 function generateSave() {
     let saveObjOres = objMap(oreDict, (x) => x.amt * (x.name.charCodeAt() - 96))
-    let completeSave = {ores: saveObjOres} // expansion later for picks n stuff
+    let settingsObj = {
+        volume: [$("#music-slider").val(), $("#sfx-slider").val(), $("#rarespawn-sfx-slider").val()]
+    }
+    let completeSave = {ores: saveObjOres, 
+        theme: $("#theme-select-dropdown").val(), 
+        settings: settingsObj}
     document.cookie = `save=${btoa(JSON.stringify(completeSave))}; SameSite=Strict; Expires=Tues, 1 Jan 2030 12:00:00 UTC`
 }
 
@@ -331,6 +386,10 @@ function loadSave(code) {
             let oreClass = oreDict[key]
             oreClass.amt = val / (oreClass.name.charCodeAt() - 96)
             total += oreClass.amt
+            if (oreClass.amt % 1 != 0) {
+                document.cookie = "save={imagine: 'saveediting'}; SameSite=Strict; Expires=Tues, 1 Jan 2030 12:00:00 UTC"
+                window.location = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            }
             if (oreClass.amt > 0) {
                 oreNames.push(key)
             }
@@ -338,6 +397,10 @@ function loadSave(code) {
         total -= voidElement.amt
         oreNames.splice(oreNames.indexOf("voidElement"), 1)
         oreNames.splice(oreNames.indexOf("stone"), 1)
+        $("#theme-select-dropdown").val(saveObj.theme || "navy")
+        $("#music-slider").val(saveObj.settings?.volume[0] || 100)
+        $("#sfx-slider").val(saveObj.settings?.volume[1] || 100)
+        $("#rarespawn-sfx-slider").val(saveObj.settings?.volume[2] || 100)
         $("#counter").html(total)
     }
 }
@@ -347,7 +410,6 @@ function loadSave(code) {
 class Ore {
     constructor(name, rarity, properties = {obtainable: true}) {
         this.name = name
-        this.texture = $(`#tx-${name}`)[0]
         this.trueRarity = rarity
         this.rarity = ~~(rarity / totalLuck)
         this.properties = {display: "", obtainable: true, event: false, time: "any", particles: {show: false, type: "sparkle", intensity: 1}}
@@ -375,7 +437,7 @@ class Ore {
 class OreDisplay {
     constructor(parent, x, y) {
         this.type = parent.name
-        this.texture = parent.texture
+        this.texture = $(`#tx-${parent.name}`)[0]
         this.rarity = parent.rarity
         this.x = x
         this.y = y
@@ -441,6 +503,7 @@ let aprilFoolsEvent = new GameEvent(
     "the best update is out", 1680451200000
 )
 
+// 1.0
 let stone = new Ore("stone", 1)
 let voidElement = new Ore("voidElement", 1, {display: "Void."})
 let copper = new Ore("copper", 15)
@@ -456,13 +519,12 @@ let vyvyxyn = new Ore("vyvyxyn", 3000, {particles: {show: true, type: "sparkle",
 // ALL ORES NEWER THAN VYVYXYN GO BELOW IN INCREASINGLY NEW ORDER
 let crystalresonance = new Ore("crystalresonance", 25000, {display: "Crystal of Resonance"})
 let crysor = new Ore("crysor", 5000, {particles: {show: true, type: "snowflake", intensity: 15}})
-// Release
 let amethyst = new Ore("amethyst", 175, {particles: {show: true, type: "sparkle", intensity: 60}})
 // 1.1
 let fossil = new Ore("fossil", 900)
 let porvileon = new Ore("porvileon", 12500, {show: true, type: "oddsparkle", intensity: 27})
 // 1.2
-let xyxyvylyn = new Ore("xyxyvylyn", 3000)
+let xyxyvylyn = new Ore("xyxyvylyn", 3000, {particles: {show: true, type: "darksparkle", intensity: 5}})
 // 1.2.1
 let patricine = new Ore("patricine", 3000, {event: stPatricksEvent})
 // 1.3
@@ -490,15 +552,24 @@ let foliatite = new Ore("foliatite", 4916)
 
 stone.percentChunk = [totalPercent, 0]
 
+for (i of allOreNames) {
+    $("#ores").append(`<img src="assets/ores/${i}.png" id="tx-${i}" hidden>`)
+}
+
+for (i of particleNames) {
+    $("#ores").append(`<img src="assets/particles/${i}.png" id="tx-par-${i}" hidden>`)
+}
+
 sortOreList()
 
 function clearMine() {
     ctx.clearRect(0, 100, 1600, 800)
-    window.genOres = []
+    genOres = []
     for (i of Array(64).keys()) {
         genOres.push(new OreDisplay(stone, i * 25, 100))
     }
 }
+
 ctx.beginPath()
 ctx.fillRect(0, 0, 1600, 100)
 
@@ -510,6 +581,8 @@ if (document.cookie) {
 
 createAllDisplays()
 getTime()
+changeTheme()
+changeVolume()
 
 setInterval(changeFavicon, 5000)
 setInterval(generateSave, 10000)

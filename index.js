@@ -147,7 +147,7 @@ function renderFx() {
         i.refresh()
     }
     for (i of genOres.filter(x => x.particles.show)) {
-        if ((ticks + i.creationTime) % i.particles.intensity == 0) {
+        if (~~(ticks + i.creationTime) % i.particles.intensity == 0) {
             particles.push(new Particle(i))
         }
     }

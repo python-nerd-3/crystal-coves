@@ -36,7 +36,7 @@ let descs = {
     "foliatite": "plamceholdar (if you get the chance good job) (Designed by Samuel Green)"
 }
 
-let particleNames = ["sparkle", "fire", "oddsparkle", "fire", "darksparkle"]
+let particleNames = ["sparkle", "snowflake", "oddsparkle", "fire", "darksparkle"]
 
 // i once leaked an ore here
 // i surely wont do that again right?
